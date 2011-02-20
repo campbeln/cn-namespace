@@ -1,0 +1,201 @@
+/*
+Copyright © 2004-2010, Nicholas Campbell
+All Rights Reserved.
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of Nicholas Campbell nor the names of contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/* Disable the display of YUI's .calnavleft and .calnavright in the calendar header */
+.yui-calendar .calnavleft,
+.yui-calendar .calnavright {
+	display: none;
+}
+.yui-calendar .calheader {
+	font-weight: bold;
+	text-align: center;
+}
+
+
+
+/* Cn classes - employed to contain the styles utilized by the YUI calendar */
+.Cn {}
+
+.Cn table {
+	border-collapse: separate;
+}
+
+.Cn .CalendarContainer {
+	background: white;
+	border: 1px solid #efefef;
+	padding: 1px;
+}
+
+
+/* Copyright (c) 2006 Yahoo! Inc. All rights reserved. */
+/* Container Styles */
+
+.Cn .calcontainer {*height:1%;} /* IE */
+.Cn .calcontainer:after {content:'.';clear:both;display:block;visibility:hidden;height:0;} /* others */
+
+.Cn .calbordered {
+	float:left;
+	padding:5px;
+	background-color:#F7F9FB;
+	border:1px solid #7B9EBD;
+}
+
+.Cn .calbordered .title {
+	font:73% Arial,Helvetica,sans-serif;
+	color:#000;
+	font-weight:bold;
+	margin-bottom:5px;
+	height:auto;
+	width:304px;
+	position:relative;
+}
+
+.Cn .title .close-icon {
+	position:absolute;
+	right:0;
+	top:0;
+	border:none;
+}
+
+.Cn .cal2up {
+	float:left;
+}
+
+.Cn .calnavleft {
+	position:absolute;
+	top:0;
+	bottom:0;
+	height:12px;   
+	left:2px;
+}
+
+.Cn .calnavright {
+	position:absolute;
+	top:0;
+	bottom:0;
+	height:12px;  
+	right:2px;
+}
+
+/* Calendar element styles */
+
+.Cn .calendar {
+	font:73% Arial,Helvetica,sans-serif;
+	font-size: 12px;
+	text-align:center;
+	border-spacing:0;
+}
+
+.Cn .calcell {
+	width:1.5em;
+	height:1em;
+	border:1px solid #E0E0E0;
+	background-color:#FFF;
+}
+
+.Cn .calcell a {
+	color:#003DB8;
+	text-decoration:none;
+}
+
+.Cn .calcell.today {
+	border:1px solid #000;
+}
+
+.Cn .calcell.oom,
+.Cn .calcell.oom:hover {
+	cursor:default;
+	color:#999;
+	background-color:#EEE;
+	border:1px solid #E0E0E0;
+}
+
+.Cn .calcell.selected {
+	color:#003DB8;
+	background-color:#FFF19F;
+	border:1px solid #FF9900;
+}
+
+.Cn .calcell:hover,
+.Cn .calcell.calcellhover {
+	cursor:pointer;
+	color:#FFF;
+	background-color:#FF9900;
+	border:1px solid #FF9900;
+}
+
+.Cn .calcell.calcellhover a,
+.Cn .calcell:hover a {
+	color:#FFF;
+}
+
+.Cn .calcell.restricted {
+	text-decoration:line-through;
+}
+
+.Cn .calcell.previous {
+	color:#CCC;
+}
+
+.Cn .calcell.highlight1 { background-color:#CCFF99; }
+.Cn .calcell.highlight2 { background-color:#99CCFF; }
+.Cn .calcell.highlight3 { background-color:#FFCCCC; }
+.Cn .calcell.highlight4 { background-color:#CCFF99; }
+
+
+.Cn .calhead {
+	border:1px solid #E0E0E0;
+	vertical-align:middle;
+	background-color:#FFF;
+}
+
+.Cn .calheader {
+	position:relative;
+	width:100%;
+}
+
+.Cn .calheader img {
+	border:none;
+}
+
+.Cn .calweekdaycell {
+	color:#666;
+	font-weight:normal;
+}
+
+.Cn .calfoot {
+	background-color:#EEE;
+}
+
+.Cn .calrowhead, .calrowfoot {
+	color:#666;
+	font-size:9px;
+	font-style:italic;
+	font-weight:normal;
+	width:15px;
+}
+
+.Cn .calrowhead {
+	border-right-width:2px;
+}
+
+
+
+
+.Cn .calNavButtons {
+	cursor: pointer;
+	float: left;
+	margin-left: 3px;
+}
+
+.Cn .calDateTimeDIVs {
+	float: left;
+	width: 100%;
+}

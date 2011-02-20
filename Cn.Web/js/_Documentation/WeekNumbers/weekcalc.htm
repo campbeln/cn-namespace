@@ -1,0 +1,2083 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en"><head>
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Merlyn - Week Number Calculation - J R Stockton</title>
+
+<meta name="description" content="Week Number Calculation">
+<meta name="keywords" content="Year, Week, Date, ISO 8601, JRS">
+<meta name="MSSmartTagsPreventParsing" content="TRUE">
+
+<script type="text/javascript" src="weekcalc_files/include1.js"></script>
+<script type="text/javascript" src="weekcalc_files/include3.js"></script>
+
+<link rel="StyleSheet" href="weekcalc_files/styles-a.css" type="text/css"></head><body>
+
+<script type="text/javascript">
+if (typeof(Inc1T)=='undefined') alert('File include1.js top fault, RSVP!')
+if (typeof(Inc1B)=='undefined') alert('File include1.js end fault, RSVP!')
+if (typeof(Inc3T)=='undefined') alert('File include3.js top fault, RSVP!')
+if (typeof(Inc3B)=='undefined') alert('File include3.js end fault, RSVP!')
+</script>
+
+<div id="z"><a name="Head">To</a> <a href="#Tail">Foot</a></div>
+
+<div class="CEN">
+<a href="http://www.merlyn.demon.co.uk/index.htm#Copy">©</a>
+J R Stockton, &gt;= 2006-04-02
+
+<h1><a href="http://www.merlyn.demon.co.uk/weekcalc.htm">
+Week Number Calculation</a><a href="http://www.merlyn.demon.co.uk/weekcalc.htm">.</a></h1>
+
+<div class="CAN">
+ <a href="http://www.merlyn.demon.co.uk/weekcalc.htm" target="_top">No-Frame</a> *
+ <a href="http://www.merlyn.demon.co.uk/frames-1.htm">Framed Index</a> *
+ <a href="http://www.merlyn.demon.co.uk/frames-4.htm?weekcalc.htm">Frame This</a>
+</div></div>
+
+<div class="NDX">
+Links within this site :-
+<ul>
+ <li><b><a href="http://www.merlyn.demon.co.uk/index.htm">Merlyn Home Page</a></b>
+  - Site Index, E-Mail, Copying
+
+ </li><li><b>This Page</b> :-<ul>
+
+  <li><a href="#WNR">Week Number Routines</a> :-<ul>
+   <li><a href="#CE">Correctness and Efficiency</a>
+   </li><li><a href="#IFAM">Imported Functions and Added Methods</a>
+   </li></ul>
+
+  </li><li><a href="#WNP">ISO Week Number Programming</a> :-<ul>
+   <li><a href="#GC">General Considerations</a>
+   </li><li><a href="#WA">Y M D to/from Y W D Arithmetically</a>
+   </li><li><a href="#Tstg">General Testing</a>
+   </li></ul>
+
+  </li><li><a href="#ISL">ISO Week Numbers in Specific Languages</a> :-<ul>
+    <li><a href="#JS">Javascript</a>
+    </li><li><a href="#VB">VBscript</a>
+    </li><li><a href="#DB">DOS Batch</a>
+    </li><li><a href="#NXB">NT/XP Batch</a>
+    </li><li><a href="#WSH">Windows Scripting Host</a>
+    </li><li><a href="#PD">Pascal/Delphi</a>
+    </li><li><a href="#GWF">GAWK &amp; C</a>
+    </li><li><a href="#KX">KiXtart</a>
+    </li><li><a href="#SQL">SQL Server</a>
+    </li><li><a href="#Perl">Perl</a>
+   </li></ul>
+
+  </li><li><a href="#NIP">Non-ISO Week Number Programming</a> :-<ul>
+   <li><a href="#T1">Type 1. Year Number is always Calendar Year</a>
+   </li><li><a href="#T2">Type 2. Every Week has Seven Days</a>
+   </li><li><a href="#T3">Type 3. Week 01 begins on a Given Date</a> :-<ul>
+    <li><a href="#UKTW">HM Revenue and Customs Tax Weeks</a>
+    </li></ul>
+   </li><li><a href="#T4">Type 4. Absolute Week Numbers</a>
+   </li></ul>
+
+  </li><li><a href="#WUC">Week Numbers in UNIX &amp; C Utilities</a>
+  </li></ul>
+
+ </li><li><a href="http://www.merlyn.demon.co.uk/js-nclds.htm">Included Functions</a>
+ </li><li><a href="http://www.merlyn.demon.co.uk/weekinfo.htm">Calendar Weeks</a> (split 2005-03-14)
+ </li><li><a href="http://www.merlyn.demon.co.uk/js-date7.htm">Javascript Date and Time 7 :
+  Working with Weeks</a>
+ </li><li><a href="http://www.merlyn.demon.co.uk/vb-dates.htm">VBscript Date and Time</a>
+ </li><li><a href="http://www.merlyn.demon.co.uk/datecalc.htm">Date and Time Calculation</a>
+
+ </li><li>Related Tables :-<ul>
+  <li><a href="http://www.merlyn.demon.co.uk/greg-cal.txt">Gregorian Calendar 1970-2030</a>
+  </li><li><a href="http://www.merlyn.demon.co.uk/greg-1mo.txt">Gregorian Month-Starts 1600-2800</a>
+  </li><li><a href="http://www.merlyn.demon.co.uk/week-cal.txt">ISO Week Calendar 1970-2030</a>
+  </li><li><a href="http://www.merlyn.demon.co.uk/wknotest.txt">Test Data</a> for ISO Week Numbers
+  </li></ul>
+ </li><li>For my other date/time pages, and links, see
+  <a href="http://www.merlyn.demon.co.uk/datelinx.htm">Date and Time Index and Links</a>
+ </li></ul>
+</div>
+
+
+
+
+
+<h2><a name="WNR">Week Number Routines</a></h2>
+
+<p>Requests for "a function to return the week number of a date" are
+common. It is essential
+<br>&nbsp; * &nbsp; to check which definition is to be used;
+<br>&nbsp; * &nbsp; and, for some definitions, to return also the
+proper year number, because of the overlaps.
+<br>Such a function can also return a Day-of-Week number.</p>
+
+<p>Algorithms here are shown mostly in javascript. If translating to
+VBscript,<tt> DateSerial </tt> can be useful. For Pascal/Delphi, see my
+<a href="http://www.merlyn.demon.co.uk/pas-time.htm">Borland Pascal Time and Date</a> and unit <a href="http://www.merlyn.demon.co.uk/programs/dateprox.pas">dateprox.pas</a>.</p>
+
+<p>Here, javascript Week Numbers are held in arrays [y, w, d].</p>
+
+<p>Each function giving [y, w, d] here should have a
+corresponding reverse function.</p>
+
+<p>It should generally be easy enough to convert a week-of-year
+algorithm to a corresponding week-of-month one.</p>
+
+<p>Refer to the corresponding parts of
+<a href="http://www.merlyn.demon.co.uk/weekinfo.htm">Calendar Weeks</a>
+for the associated descriptive material.</p>
+
+<p style="color: red; font-size: larger;">It is possible that some code
+may inadvertently assume either that local time is GMT or that local
+time is less than 12 hours away from GMT. RSVP if you see signs of that
+here, unless specific warning is given.</p>
+
+
+
+<h3><a name="CE">Correctness and Efficiency</a></h3>
+
+<p>The conversion routines are believed to give correct results, and
+the javascript ones can be tested on this page.</p>
+
+<p>The underlying algorithms are reasonably efficient; they go directly
+to the result, without looping.</p>
+
+<p>But the implementation of some of the javascript algorithms that run
+on this page may not be optimum. In particular, I have noticed that
+using UTC date object functions internally is much faster, and have been
+converting more routines. Also, code converting <i>via</i> <a href="http://www.merlyn.demon.co.uk/daycount.htm">DayCount</a> is comparatively fast. See also in
+<a href="http://www.merlyn.demon.co.uk/js-date1.htm#Effy">Javascript Date and Time 1 :
+Date Arithmetic</a>.</p>
+
+<p>Pascal/Delphi code in my <a href="http://www.merlyn.demon.co.uk/programs/dateprox.pas">dateprox.pas</a> etc. is mostly older,
+and may be less efficient.</p>
+
+
+<h4><a name="DoW">Day-of-Week</a></h4>
+
+<p>Day-of-Week of a given date in early January of a known Gregorian
+year number is often needed; that can be rapidly determined with
+expressions such as used by <a href="http://www.merlyn.demon.co.uk/zeller-c.htm">Zeller</a>.</p>
+
+<pre class="SRC">For 1901-2099, to get Day-of-Week of January 1st, using Sun=0 :-
+(5*(y-1) div 4) mod 7    or    Trunc(1.25*(y-1)) mod 7
+</pre>
+
+<script type="text/javascript">
+
+function Jan1DoWJ(y) { // Sun=0, for 1901-2099 only
+  return ( (1.25*(y-1)|0) ) % 7 }
+
+function Jan1DoWG(y) { y-- // Sun=0, any Gregorian year
+  return ( (1.25*y|0) - (y/100|0) + (y/400|0) + 1 ) % 7 }
+
+function Jan1line(y) { var D, Q, X, Z
+  D = new Date(y, 0, 1)  // January 1st
+  Q = D.getDay()         // Sun=0 to Sat=6
+  X = Jan1DoWJ(y) ; Z = Jan1DoWG(y)
+  return D.YMDDstr() + '\t' + Q + '\t' + X + ' ' + (Q==X) +
+    '\t\t' + Z + ' ' + (Q==Z) + "\n" }
+
+function Jan1lists() { var y, D, Q, X, Z
+  St = "<pre>\n\t\tOK\tJ\t\tG\n"
+  for (y=1500; y<2901; y+=100) St += Jan1line(y)
+  St += "\n"
+  for (y=1896; y<2106; y++) St += Jan1line(y)
+  NewPage("Jan 1 List", St + "<\/pre>") }
+
+ShoFFF(Jan1DoWJ, Jan1DoWG, Jan1line, Jan1lists)
+
+</script><p align="center">
+<textarea readonly="readonly" wrap="virtual" style="border: thick double lightgreen;" cols="69" rows="31">function Jan1DoWJ(y) {
+    return ((1.25 * (y - 1) | 0)) % 7;
+}
+
+function Jan1DoWG(y) {
+    y--;
+    return ((1.25 * y | 0) - (y / 100 | 0) + (y / 400 | 0) + 1) % 7;
+}
+
+function Jan1line(y) {
+    var D, Q, X, Z;
+    D = new Date(y, 0, 1);
+    Q = D.getDay();
+    X = Jan1DoWJ(y);
+    Z = Jan1DoWG(y);
+    return D.YMDDstr() + "	" + Q + "	" + X + " " + (Q == X) + "		" + Z + " " + (Q == Z) + "\n";
+}
+
+function Jan1lists() {
+    var y, D, Q, X, Z;
+    St = "&lt;pre&gt;\n		OK	J		G\n";
+    for (y = 1500; y &lt; 2901; y += 100) {
+        St += Jan1line(y);
+    }
+    St += "\n";
+    for (y = 1896; y &lt; 2106; y++) {
+        St += Jan1line(y);
+    }
+    NewPage("Jan 1 List", St + "&lt;/pre&gt;");
+}</textarea></p>
+<noscript><p> * Javascript here * </p></noscript>
+
+
+<div class="TRY">
+<input value="Jan 1 list" onclick="Jan1lists()" type="button"> &nbsp;
+use Back to return.
+</div>
+
+
+
+<h3><a name="IFAM">Imported Functions and Added Methods</a></h3>
+
+<p>See <a href="http://www.merlyn.demon.co.uk/js-nclds.htm">Javascript Include Files</a>.</p>
+
+<ul>
+ <li>General :-<ul>
+  <li>function<tt> LZ(N) </tt>to a two-digit string
+  </li></ul>
+ </li><li><a href="http://www.merlyn.demon.co.uk/datefmts.htm#8601">ISO 8601</a> :-<ul>
+  <li>method<tt> D.ISOlocaldateStr() </tt>to local<tt> yyyy-mm-dd</tt>
+  </li><li>method<tt> D.YMDDstr() </tt>to local<tt> yyyy-mm-dd DoW</tt>
+  </li><li>function<tt> YMD2YWD(y, m, d) </tt>to [Y, W, D]
+  </li><li>function<tt> CMJDtoYWD(CMJD) </tt>to [Y, W, D]
+  </li><li>function<tt> YWDtoCMJD([Y, W, D]) </tt>to CMJD
+  </li><li>function<tt> CMJDzuYMD(CMJD) </tt>to [Y, M, D]
+  </li><li>function<tt> YMDzuCMJD(y, m, d) </tt>to CMJD
+  </li></ul>
+ </li></ul>
+
+
+
+
+<h2><a name="WNP">ISO Week Number Programming</a></h2>
+
+<p>For a discussion of <a href="http://www.merlyn.demon.co.uk/datefmts.htm#8601">ISO 8601</a> week
+numbers in general, see in <a href="http://www.merlyn.demon.co.uk/weekinfo.htm#WkNo">Calendar
+Weeks</a>.</p>
+
+<p>All ISO weeks are Monday = 1 to Sunday = 7, and week 01 of
+the numbering year is the one containing the first Thursday of the
+Gregorian year. Thus up to three days of the first and last weeks for a
+year number can be in the adjacent Gregorian year; December 29 to
+January 03 can have a numbering year differing from the Gregorian.</p>
+
+<p>A complete ISO Week Number function must also return the Year Number.
+It is easy enough also to return the Day-of-Week number,<tt> DoW</tt>.</p>
+
+<p>Some methods give the Year directly. Otherwise, if the Calendar Month
+Number is large and the ISO Week Number is small then increment the Year,
+and <i>vice versa</i>, or otherwise.</p>
+
+<p>String forms such as "yyyy-Www" or "yyyy-Www-d" or "yyyy-ww" or
+"yyyy-ww-d" can be used, depending on context; or arrays [Y, W, D].</p>
+
+
+<h4>Common Functions</h4>
+
+<p>This returns a string "yyyy-Www-d" from an array [y, w, d],
+to represent ISO&nbsp;8601 week numbers.</p>
+
+<script type="text/javascript">
+
+function ISOWstr(A) { return A[0] + "-W" + LZ(A[1]) + "-" + A[2] }
+
+ShoFFF(ISOWstr)
+
+</script><p align="center">
+<textarea readonly="readonly" wrap="virtual" style="border: thick double lightgreen;" cols="69" rows="3">function ISOWstr(A) {
+    return A[0] + "-W" + LZ(A[1]) + "-" + A[2];
+}</textarea></p>
+<noscript><p> * Javascript here * </p></noscript>
+
+
+
+<h3><a name="GC">General Considerations</a></h3>
+
+<p>In practice, the best method of implementation will depend on the
+nature and speed of the available primitive operations, and on whether
+the date is represented as a string, as Y,M,D, or as a count of time or
+whatever.</p>
+
+<p>If using a [milli-]seconds-based method for <a href="http://www.merlyn.demon.co.uk/daycount.htm">DayCount</a>, consider carefully <a href="http://www.merlyn.demon.co.uk/uksumtim.htm">Summer Time</a>, remembering that it can span a New
+Year. So rounding the time from January 4th is better than truncating
+the time from January 1st.</p>
+
+<p>It can be useful to know that
+<a href="http://www.merlyn.demon.co.uk/miscdate.htm#CJD">CJD</a> 0 was a Monday, and that
+<a href="http://www.merlyn.demon.co.uk/miscdate.htm#Utt">1970-01-01</a> was a Thursday.</p>
+
+
+<h4>Date to Week Number and Day-of-Week</h4>
+
+<p>When calculating ISO 8601 Week Number, giving the Year Number is
+essential. The Day Number will normally be easy to find <i>en
+passant</i>.</p>
+
+
+<h5>Absolute Week Number and Day-of-Week</h5>
+
+<p>If a DayCount is known, then
+<br><tt>&nbsp;
+ (DayCount+K) div 7 &nbsp; &nbsp; </tt> &nbsp; gives an Absolute Week
+ Number (AWN),
+<br><tt>&nbsp;
+ 1 + (DayCount+K) mod 7 </tt> &nbsp; gives the Day-of-Week (DoW).
+<br>where<tt> K </tt>allows for the Day-of-Week of DayCount zero, and
+ensures that the arguments of<tt> mod &amp; div </tt>are
+never negative.</p>
+
+
+<h5>Start of Given Week Numbering Year</h5>
+
+<ul>
+ <li>Round Year-Jan-1st, or truncate Year-Jan-4th, to Monday.
+ </li></ul>
+
+
+<h5>Start of Current Week Numbering Year</h5>
+
+<ul>
+ <li>Truncate the date to Monday and add 3, truncate to Jan&nbsp;1
+  and add 3, truncate to Monday.
+ </li></ul>
+
+
+<h5>Week Number, A</h5>
+
+<ul>
+ <li>The Week of any day is that of its nearest Thursday :-<ul>
+  <li>to get that Thursday, one can use either of :-<ul>
+    <li><tt> Date = Date + 4 - DoW </tt>days
+    </li><li><tt> DayCount = DayCount + 3 - (DayCount+K) mod 7 </tt>days,
+   </li></ul>
+  in the course of which Day-of-Week is determined.
+  </li></ul>
+ </li><li>The Year is the Calendar Year of that Thursday
+ </li><li>The First Thursday of a Calendar Year is in Week Number 1
+ </li><li>The Week Number of that nearest Thursday is thus its Zero-Based
+  Day-of-Calendar-Year, divided by 7, truncated, plus one
+ </li><li><i>Actually finding the First Thursday is, therefore, not necessary</i>
+ </li><li>Coded in<tt> DobToYWD(DArg)</tt> using a javascript Date Object
+ </li><li>Coded in<tt> ???(Y, M, D)</tt> using only explicit arithmetic
+- TO BE ADDED
+</li></ul>
+
+
+<h5>Week Number, B</h5>
+
+<ul>
+ <li>Go ahead 3 days, as this method  offsets weeks by 3 days
+ </li><li>Get the DayCount from 0 = any Thursday, <i>e.g.</i> 1970-01-01
+ </li><li>Get the AWN, from Week 0 starting on DayCount 0, by<tt> div </tt>7
+ </li><li>Get the Gregorian Year, Wyr, of the start of week AWN
+ </li><li>Decrement the AWN by that of Wyr-01-00
+ </li><li>Return [Wyr, AWN, DoW]
+ </li><li>Coded in<tt> YMD2YWD(y, m, d)</tt>
+ </li></ul>
+
+
+
+
+<h4>Week Number and Day-of-Week to Date</h4>
+
+<ul>
+ <li>Determine the date of the start of Week 1, Monday Year-01-1,
+  using one of :-<ul>
+  <li>Find the Day-of-Week of January 4th of the Year,
+   and the<tt> Offset </tt>(-6..0 days) from there to the Monday of that Week
+  </li><li>Find the Day-of-Week of January 1st of the Year,
+   and the<tt> Offset </tt>(-3..+3 days) from there to the nearest Monday;
+  </li></ul>
+ </li><li>Increment January 1st/4th by<tt> Offset + 7*(Week-1) + (DoW-1) </tt>days.
+ </li></ul>
+
+
+<h4>Demonstrations</h4>
+
+<p>Using Javascript,</p>
+
+<form name="FrmZ" class="TRY" action="#" style="padding: 0pt;">
+<div class="CEN">
+<table summary="visual"><tbody><tr>
+<th colspan="5">Interconversion Demonstrator</th></tr>
+<tr><th colspan="2">From YYYY-MM-DD</th>
+ <td style="width: 3%;"></td>
+ <th colspan="2">From YYYY-WW-D</th></tr>
+<tr>
+ <td><label for="id1">Test Date Y M D</label></td>
+ <td><input name="YMD" size="13" id="id1" type="text">
+  <input name="A0" value=" ? " onclick="DemoYMDtoYWD(this.form) ; DemoYWDtoYMD(this.form)" type="button"></td>
+ <td></td>
+ <td><label for="id2">Test Date Y W D</label></td>
+ <td><input name="YWD" size="13" id="id2" type="text">
+  <input name="A1" value=" ? " onclick="DemoYWDtoYMD(this.form) ; DemoYMDtoYWD(this.form)" type="button">
+  </td></tr>
+<tr>
+ <td><label for="id3">To Date Object</label></td>
+ <td><input name="TDob" size="20" id="id3" readonly="readonly" type="text"></td>
+ <td></td>
+ <td><label for="id4">Which splits into</label></td>
+ <td><input name="WSit" size="20" id="id4" readonly="readonly" type="text"></td></tr>
+<tr>
+ <td><label for="id5">Nearest Thursday</label></td>
+ <td><input name="NThu" size="20" id="id5" readonly="readonly" type="text"></td>
+ <td></td>
+ <td><label for="id6">Year's Jan 4th</label></td>
+ <td><input name="Jan4" size="20" id="id6" readonly="readonly" type="text"></td></tr>
+<tr>
+ <td colspan="2"><label for="id7">That Thursday is Z-B Day-of-Year</label>
+  <input name="ZBDY" size="4" id="id7" readonly="readonly" type="text"></td>
+ <td></td>
+ <td><label for="id8">Increment that by</label></td>
+ <td><input name="Incr" size="14" id="id8" readonly="readonly" type="text"> days</td></tr>
+<tr><td class="CEN" colspan="5">The answer for each column appears
+ at the top of the other and is reprocessed therein.</td></tr>
+</tbody></table>
+</div>
+</form>
+
+<p>Manually tested above :-</p>
+
+<script type="text/javascript">
+
+function DemoYMDtoYWD(F) { with (F) {
+  TDob.value = NThu.value = ZBDY.value = '?'
+  var DOb = new Date(YMD.value.replace('-', '/'))
+  if (isNaN(DOb)) return false
+  var D = DOb.getDay()
+  if (D==0) D=7 ; TDob.value = DOb.YMDDstr() + ';  D=' + D
+  DOb.setDate(DOb.getDate() + (4-D)) ; NThu.value = DOb.YMDDstr()
+  var YN = DOb.getFullYear()
+  var ZBDoCY = ZBDY.value = // Jan 1; -6h allows for Summer Time
+    Math.floor( (DOb.getTime() - new Date(YN, 0, 1, -6)) / 864e5 )
+  var WN = Math.floor(ZBDoCY/7) + 1
+  YWD.value = YN + '-' + LZ(WN) + '-' + D
+  return true } }
+
+function DemoYWDtoYMD(F) { with (F) {
+  WSit.value = Jan4.value = Incr.value = '?'
+  if (!/(\d+)-(\d+)-(\d)/.test(YWD.value)) return false
+  with (RegExp) { WSit.value = [$1,$2,$3]
+    var DOb = new Date($1, 0, 4) ; Jan4.value = DOb.YMDDstr()
+    var D = DOb.getDay() ; if (D==0) D=7 ;
+    var Off = -(D-1)
+    Incr.value = ' ' + Off + ' + 7\u00D7' + ($2-1) + ' + ' + ($3-1)
+    DOb.setDate( DOb.getDate() + Off + 7*($2-1) + ($3-1) )
+    YMD.value = DOb.ISOlocaldateStr() }
+  return true } }
+
+function InitFrmZ() {
+  var F = document.forms["FrmZ"]
+  F.YMD.value = new Date().ISOlocaldateStr()
+  DemoYMDtoYWD(F) ; DemoYWDtoYMD(F) }
+
+InitFrmZ()
+
+ShoFFF(DemoYMDtoYWD, DemoYWDtoYMD, 0, InitFrmZ)
+
+</script><p align="center">
+<textarea readonly="readonly" wrap="virtual" style="border: thick double lightgreen;" cols="69" rows="48">function DemoYMDtoYWD(F) {
+    with (F) {
+        TDob.value = NThu.value = ZBDY.value = "?";
+        var DOb = new Date(YMD.value.replace("-", "/"));
+        if (isNaN(DOb)) {
+            return false;
+        }
+        var D = DOb.getDay();
+        if (D == 0) {
+            D = 7;
+        }
+        TDob.value = DOb.YMDDstr() + ";  D=" + D;
+        DOb.setDate(DOb.getDate() + (4 - D));
+        NThu.value = DOb.YMDDstr();
+        var YN = DOb.getFullYear();
+        var ZBDoCY = ZBDY.value = Math.floor((DOb.getTime() - new Date(YN, 0, 1, -6)) / 86400000);
+        var WN = Math.floor(ZBDoCY / 7) + 1;
+        YWD.value = YN + "-" + LZ(WN) + "-" + D;
+        return true;
+    }
+}
+
+function DemoYWDtoYMD(F) {
+    with (F) {
+        WSit.value = Jan4.value = Incr.value = "?";
+        if (!/(\d+)-(\d+)-(\d)/.test(YWD.value)) {
+            return false;
+        }
+        with (RegExp) {
+            WSit.value = [$1, $2, $3];
+            var DOb = new Date($1, 0, 4);
+            Jan4.value = DOb.YMDDstr();
+            var D = DOb.getDay();
+            if (D == 0) {
+                D = 7;
+            }
+            var Off = -(D - 1);
+            Incr.value = " " + Off + " + 7\xD7" + ($2 - 1) + " + " + ($3 - 1);
+            DOb.setDate(DOb.getDate() + Off + 7 * ($2 - 1) + ($3 - 1));
+            YMD.value = DOb.ISOlocaldateStr();
+        }
+        return true;
+    }
+}
+
+function InitFrmZ() {
+    var F = document.forms.FrmZ;
+    F.YMD.value = (new Date()).ISOlocaldateStr();
+    DemoYMDtoYWD(F);
+    DemoYWDtoYMD(F);
+}</textarea></p>
+<noscript><p> * Javascript here * </p></noscript>
+
+
+
+
+
+
+
+
+
+
+
+<h3><a name="WA">Y M D to/from Y W D Arithmetically</a></h3>
+
+<p>The following determines ISO Week Number by explicit arithmetic from
+IsLeapYear, Month, Day, and Day-of-Week, and <i>vice versa</i>,
+without going explicitly <i>via</i> a day-count.
+Javascript Date Objects are used only in testing.</p>
+
+<p>It shows the possibility of calculating ISO Week Number<tt> Www-d
+</tt>from IsLeapYear, Month, Day, and day-of-week-of-January-1st, since
+those suffice to determine the current Day-of-Week, and <i>vice
+versa</i>.</p>
+
+<p>Algorithm of function<tt> NewWN </tt>:-</p>
+
+<ul>
+ <li>Determine the <a href="http://www.merlyn.demon.co.uk/zeller-c.htm">Day-of-Week</a>
+ </li><li>The Nearest Thursday gives the Year Number
+ </li><li>Its position in that Calendar Year gives the Week Number.
+ </li></ul>
+
+<p>Algorithm of function<tt> RevWN </tt>:-</p>
+
+<ul>
+ <li>Determine the <a href="http://www.merlyn.demon.co.uk/zeller-c.htm">Day-of-Week</a> of January 3rd
+ </li><li>Use that to convert Day-of-ISO-Year to Day-of-Calendar-Year
+ </li><li>Convert to Month and Day
+ </li><li>Deal with year overflow.
+ </li></ul>
+
+
+<script type="text/javascript">
+
+function NewWN(Yr, Mo, Dy) { var DoW, Thu, DoY // by JRS ; OK
+  // see <URL:http://www.merlyn.demon.co.uk/zeller-c.htm> etc.
+  DoW = ZelDoW(Yr, Mo, Dy)	// to be Zeller or Keith ; Sun=0
+  if (DoW==0) DoW = 7		// ISO 8601, Mon=1 .. Sun=7
+  Thu = Dy + 4 - DoW		// Nearest Thursday
+  if (Mo==12 && Thu>31) return [Yr+1, 1, DoW]
+  if (Mo==01 && Thu<01) { Yr-- ; Mo = 12 ; Thu += 31 }
+  DoY = Math.floor(275*Mo/9) + Thu - 31	// see daycount.htm#Meeus
+  if (Mo>2) DoY += LeapYr(Yr) - 2
+  return [Yr, 1 + Math.floor(DoY/7), DoW]
+  // 6 days of 7, LeapYr does not affect the result ...
+  // The first return can be replaced by { Yr++;Mo=1;Thu-=31 } ?
+  // It's probably better to use an array of month data.
+  }
+
+function Jan1DoWG(y) { y-- // Jan 1's DoW, Sun=0, any Gregorian year
+  // see weekcalc.htm#DoW
+  return ( (1.25*y|0) - (y/100|0) + (y/400|0) + 1 ) % 7 }
+
+function DoYLtoMonth(J, L) { // J is Day of Year, Jan1=1, L is Leap
+  return J<32 ? 1 : 1 + Math.floor((303 + 5*(J - 59 - L))/153) }
+
+function DoYMLtoDate(J, M, L) { // J is DoY, M is Month, L is Leap
+  return J - (M<3 ? 31*(M-1) : (((153*M-2)/5)|0) - 32 + L) }
+
+function RevWN(YWDA) { // [Y,W,D] to [Y,M,D] ??? // seems right now
+  var X, J, Yr = YWDA[0], Leap = LeapYr(Yr), Mth, Dte
+  X = (Jan1DoWG(Yr)+2) % 7		// DoW of Jan 3, Sun=0
+  J = 7*YWDA[1] + YWDA[2] - X - 4	// Answer is Yr Jan J
+  // return new Date(Yr, 0, J)		// OK; next with arithmetic
+  Mth = DoYLtoMonth(J, Leap) ; Dte = DoYMLtoDate(J, Mth, Leap)
+  // It's probably better to use an array of month data
+  if (Mth==13) { Yr++ ; Mth = 1 }
+  if (Dte < 1) { Yr-- ; Mth = 12 ; Dte +=31 }
+  return [Yr, Mth, Dte] }
+
+
+function TryArithWN() { var J, Y, M, D, DD, WN1, WN2, OK, ERR=0, XD,
+  St = "<pre>\nErrors will be marked *"+
+    "\n\n\t\t  OK\t\tNewWN\t\tRevWN\t\tErr\n"
+  for (J=-4; J<11111; J++) {
+    with (DD = new Date(2005, 0, J)) {
+      Y = getFullYear() ; M = getMonth()+1 ; D = getDate()
+      OK = YMD2YWD(Y, M, D) // known good
+      WN2 = NewWN(Y, M, D) ; XD = RevWN(WN2)
+      St += DD.YMDDstr() + "\t  " + OK + "\t" + WN2 + "\t" + XD
+      if (WN2[0]!=OK[0] || WN2[1]!=OK[1] || WN2[2]!=OK[2] ||
+          XD[0]!=DD.getFullYear() || XD[1]-1!=DD.getMonth() ||
+          XD[2]!=DD.getDate() ) { St += "\t*" ; ERR++ }
+      St += "\n"
+      if (D==6) { St += "\n" ; J+=354 } // not for full test
+      } }
+  NewPage("TryArithWN", St + "<\/pre>")
+  if (ERR) alert("Errors " + ERR) }
+
+ShoFFF(LeapYr, ZelDoW, NewWN, Jan1DoWG,
+  DoYLtoMonth, DoYMLtoDate, RevWN, 0, TryArithWN)
+
+</script><p align="center">
+<textarea readonly="readonly" wrap="virtual" style="border: thick double lightgreen;" cols="69" rows="74">function LeapYr(y) {
+    if (y % 4) {
+        return false;
+    }
+    if (y % 100) {
+        return true;
+    }
+    return !(y % 400);
+}
+
+function ZelDoW(y, m, d) {
+    if (m &lt; 3) {
+        m += 12;
+        y--;
+    }
+    return (2 + d + (((13 * m - 2) / 5) | 0) + ((5 * y) &gt;&gt; 2) - ((y / 100) | 0) + ((y / 400) | 0)) % 7;
+}
+
+function NewWN(Yr, Mo, Dy) {
+    var DoW, Thu, DoY;
+    DoW = ZelDoW(Yr, Mo, Dy);
+    if (DoW == 0) {
+        DoW = 7;
+    }
+    Thu = Dy + 4 - DoW;
+    if (Mo == 12 &amp;&amp; Thu &gt; 31) {
+        return [Yr + 1, 1, DoW];
+    }
+    if (Mo == 1 &amp;&amp; Thu &lt; 1) {
+        Yr--;
+        Mo = 12;
+        Thu += 31;
+    }
+    DoY = Math.floor(275 * Mo / 9) + Thu - 31;
+    if (Mo &gt; 2) {
+        DoY += LeapYr(Yr) - 2;
+    }
+    return [Yr, 1 + Math.floor(DoY / 7), DoW];
+}
+
+function Jan1DoWG(y) {
+    y--;
+    return ((1.25 * y | 0) - (y / 100 | 0) + (y / 400 | 0) + 1) % 7;
+}
+
+function DoYLtoMonth(J, L) {
+    return J &lt; 32 ? 1 : 1 + Math.floor((303 + 5 * (J - 59 - L)) / 153);
+}
+
+function DoYMLtoDate(J, M, L) {
+    return J - (M &lt; 3 ? 31 * (M - 1) : (((153 * M - 2) / 5) | 0) - 32 + L);
+}
+
+function RevWN(YWDA) {
+    var X, J, Yr = YWDA[0], Leap = LeapYr(Yr), Mth, Dte;
+    X = (Jan1DoWG(Yr) + 2) % 7;
+    J = 7 * YWDA[1] + YWDA[2] - X - 4;
+    Mth = DoYLtoMonth(J, Leap);
+    Dte = DoYMLtoDate(J, Mth, Leap);
+    if (Mth == 13) {
+        Yr++;
+        Mth = 1;
+    }
+    if (Dte &lt; 1) {
+        Yr--;
+        Mth = 12;
+        Dte += 31;
+    }
+    return [Yr, Mth, Dte];
+}
+
+function TryArithWN() {
+    var J, Y, M, D, DD, WN1, WN2, OK, ERR = 0, XD, St = "&lt;pre&gt;\nErrors will be marked *\n\n		  OK		NewWN		RevWN		Err\n";
+    for (J = -4; J &lt; 11111; J++) {
+        with (DD = new Date(2005, 0, J)) {
+            Y = getFullYear();
+            M = getMonth() + 1;
+            D = getDate();
+            OK = YMD2YWD(Y, M, D);
+            WN2 = NewWN(Y, M, D);
+            XD = RevWN(WN2);
+            St += DD.YMDDstr() + "	  " + OK + "	" + WN2 + "	" + XD;
+            if (WN2[0] != OK[0] ||
+                WN2[1] != OK[1] ||
+                WN2[2] != OK[2] ||
+                XD[0] != DD.getFullYear() ||
+                XD[1] - 1 != DD.getMonth() || XD[2] != DD.getDate()) {
+                St += "	*";
+                ERR++;
+            }
+            St += "\n";
+            if (D == 6) {
+                St += "\n";
+                J += 354;
+            }
+        }
+    }
+    NewPage("TryArithWN", St + "&lt;/pre&gt;");
+    if (ERR) {
+        alert("Errors " + ERR);
+    }
+}</textarea></p>
+
+
+
+<div class="TRY">
+<input value="TryArithWN" onclick="TryArithWN()" type="button">
+&nbsp; Use Back to return.
+</div>
+
+
+
+
+<h3><a name="Tstg">General Testing</a></h3>
+
+<p>Comparison results which can be used by testers,
+showing Weeks 1, 52 &amp; 53 for over 28 years,
+are in <a href="http://www.merlyn.demon.co.uk/wknotest.txt">wknotest.txt</a>.</p>
+
+<p>The following checks should suffice - all weeks have 7 days, Monday
+is Day 1 of 1..7, January 4th is in Week Number 1 of 1..52/53, Year
+usually matches, numbers YYYYWWD are in increasing order, testing over
+28 years with quadrennial Leap Years (or at least over all 14 year
+types).</p>
+
+<p>Test cases should include those tabled in
+<a href="http://www.merlyn.demon.co.uk/weekinfo.htm#WPY">Calendar Weeks</a>.</p>
+
+
+
+
+<h2><a name="ISL">ISO Week Numbers in Specific Languages</a></h2>
+
+<p>Javascript is placed first merely for the convenience of contiguity
+with the demonstration above.</p>
+
+
+<h3><!-- (c) JRStockton --><a name="JS">Javascript</a></h3>
+
+<p>Where<tt> Math.round(X) </tt>is used,<tt> X|0 </tt>may be faster,
+and is equivalent for 0&lt;=X&lt;2<sup>31</sup>; but beware operator
+precedences.</p>
+
+<p>Code not using Date Objects is currently
+<a href="http://www.merlyn.demon.co.uk/weekcalc.htm#JS">elsewhere</a>.</p>
+
+
+<h4>As Demo Code Above</h4>
+
+<p>These should be evidently the same algorithms as demonstrated :-</p>
+
+<script type="text/javascript">
+
+function DobToYWD(DArg) { var DOb = new Date(DArg)
+  if (isNaN(DOb)) return false
+  var D = DOb.getDay() ; if (D==0) D=7 // D = ISO DoW
+  DOb.setDate(DOb.getDate() + (4-D))   // To nearest Thu, mid-week
+  var YN = DOb.getFullYear()           // YN = ISO W-N Year
+  var ZBDoCY = // uses Jan 1 of YN; -6h allows for Summer Time
+    Math.floor( (DOb.getTime() - new Date(YN, 0, 1, -6)) / 864e5 )
+  var WN = 1 + Math.floor(ZBDoCY/7)
+  return [YN, WN, D] /* ISO 8601 */ }
+
+function StrYWD(D) { return ISOWstr(DobToYWD(D)) }
+
+function YWDtoDob(AYWD) { // Arg : ISO 8601 : [Y, W, D]
+  var DOb = new Date(+AYWD[0], 0, 3)  // Jan 3
+  if (isNaN(DOb)) return false
+  DOb.setDate( 3 - DOb.getDay() + (AYWD[1]-1)*7 + +AYWD[2] )
+  return DOb }
+
+ShoFFF(DobToYWD, StrYWD, YWDtoDob)
+
+</script><p align="center">
+<textarea readonly="readonly" wrap="virtual" style="border: thick double lightgreen;" cols="69" rows="29">function DobToYWD(DArg) {
+    var DOb = new Date(DArg);
+    if (isNaN(DOb)) {
+        return false;
+    }
+    var D = DOb.getDay();
+    if (D == 0) {
+        D = 7;
+    }
+    DOb.setDate(DOb.getDate() + (4 - D));
+    var YN = DOb.getFullYear();
+    var ZBDoCY = Math.floor((DOb.getTime() - new Date(YN, 0, 1, -6)) / 86400000);
+    var WN = 1 + Math.floor(ZBDoCY / 7);
+    return [YN, WN, D];
+}
+
+function StrYWD(D) {
+    return ISOWstr(DobToYWD(D));
+}
+
+function YWDtoDob(AYWD) {
+    var DOb = new Date(+AYWD[0], 0, 3);
+    if (isNaN(DOb)) {
+        return false;
+    }
+    DOb.setDate(3 - DOb.getDay() + (AYWD[1] - 1) * 7 + +AYWD[2]);
+    return DOb;
+}</textarea></p>
+<noscript><p> * Javascript here * </p></noscript>
+
+<div class="TRY">
+<div class="CEN">
+Test<tt> DobToYWD </tt>and<tt> YWDtoDob</tt>
+<br><label>Y M D &nbsp;
+<input name="YMD" value="2002-12-31" size="13" type="text"></label>
+&nbsp; <input name="M" value=" -&gt; " onclick="YWD.value=StrYWD(YMD.value.split(/\D+/).join('/'))" type="button">
+&nbsp;
+<input name="W" value=" &lt;- " onclick="YMD.value=YWDtoDob(YWD.value.split(/\D+/)).ISOlocaldateStr()" type="button">
+&nbsp; <label><input name="YWD" value="2003-W01-2" size="13" type="text">
+&nbsp; Y W D</label>
+<br>Accepts moderately unreasonable dates
+</div>
+</div>
+
+<p>The next routine is in <a href="http://www.merlyn.demon.co.uk/include3.js">include3.js</a>;<tt> YMD2YWD </tt>uses a different
+method and parameters to the above.</p>
+
+<script type="text/javascript">
+
+function YMDtoYWDtest() { var D
+  with (D = new Date()) {
+    var dy=getDate(), mo=getMonth()+1, yr=getFullYear() }
+  document.write(
+    'By YMDtoYWDtest() : Today is ', D.YMDDstr(), '\nso it is',
+    ' ISO 8601 year-week-day ', ISOWstr(YMD2YWD(yr, mo, dy))) }
+
+ShoFFF(YMD2YWD, 0, YMDtoYWDtest) ; ShoOut(YMDtoYWDtest)
+
+</script><p align="center">
+<textarea readonly="readonly" wrap="virtual" style="border: thick double lightgreen;" cols="69" rows="9">function
+YMD2YWD(y, m, d) { var ms1d = 86400000, ms7d = 7 * ms1d; var DC3 =
+Date.UTC(y, m - 1, d + 3) / ms1d, DoW = 1 + (DC3 + 7777777) % 7; var
+AWN = Math.floor(DC3 / 7); var Wyr = (new Date(AWN *
+ms7d)).getUTCFullYear(); return [Wyr, AWN - Math.floor(Date.UTC(Wyr, 0,
+0) / ms7d), DoW];
+}
+function YMDtoYWDtest() { var D; with (D = new Date()) { var dy =
+getDate(), mo = getMonth() + 1, yr = getFullYear(); }
+document.write("By YMDtoYWDtest() : Today is ", D.YMDDstr(), "\nso it
+is", " ISO 8601 year-week-day ", ISOWstr(YMD2YWD(yr, mo, dy)));
+}</textarea></p>
+<pre class="OUT">
+By YMDtoYWDtest() : Today is 2006-04-13 Thu
+so it is ISO 8601 year-week-day 2006-W15-4</pre>
+<noscript><p> * Javascript here * </p></noscript>
+
+
+
+<h4>YYYY-MM-DD to YYYY-WW-D, in two ways</h4>
+
+<script type="text/javascript"> // ISO 8601 Date Converter
+
+function YMDaToYWDa(S) { // 2005-03-28 : now UTC - much faster
+  with (new Date(Date.UTC(S[0], S[1]-1, S[2]))) {
+    var DoW = getUTCDay()
+    setUTCDate(getUTCDate() - (DoW+6)%7 + 3 ) // Nearest Thu
+    var ms = valueOf() // GMT
+    setUTCMonth(0, 4) // Jan 4 is in Week 1 for ISO 8601
+    var WN = Math.round( (ms-valueOf()) / (7*864e5) ) + 1
+    return [getUTCFullYear(), WN, DoW==0 ? 7 : DoW] } }
+
+
+function TryMtoW(F) { var A1=[], A2=[], X='Not d+-dd-dd', Y='Bad S'
+    S = ReadISO8601date(F.TDSV.value.trim())
+  F.RDSV.value = S<-1?X:S<0?Y: A1 = YMDaToYWDa(S)
+  F.Incl.value = S<-1?X:S<0?Y: A2 = YMD2YWD(S[0],S[1],S[2])
+  if (A1.join() != A2.join()) alert('Code Error')
+  F.Rev.value = YWDaToYMDa(A1)
+  F.TDSV.focus() }
+
+ShoFFF(YMDaToYWDa, 0, TryMtoW)
+
+</script><p align="center">
+<textarea readonly="readonly" wrap="virtual" style="border: thick double lightgreen;" cols="69" rows="11">function YMDaToYWDa(S) {
+    with (new Date(Date.UTC(S[0], S[1] - 1, S[2]))) {
+        var DoW = getUTCDay();
+        setUTCDate(getUTCDate() - (DoW + 6) % 7 + 3);
+        var ms = valueOf();
+        setUTCMonth(0, 4);
+        var WN = Math.round((ms - valueOf()) / (604800000)) + 1;
+        return [getUTCFullYear(), WN, DoW == 0 ? 7 : DoW];
+    }
+}
+
+function TryMtoW(F) {
+    var A1 = [], A2 = [], X = "Not d+-dd-dd", Y = "Bad S";
+    S = ReadISO8601date(F.TDSV.value.trim());
+    F.RDSV.value = S &lt; -1 ? X : S &lt; 0 ? Y : A1 = YMDaToYWDa(S);
+    F.Incl.value = S &lt; -1 ? X : S &lt; 0 ? Y : A2 = YMD2YWD(S[0], S[1], S[2]);
+    if (A1.join() != A2.join()) {
+        alert("Code Error");
+    }
+    F.Rev.value = YWDaToYMDa(A1);
+    F.TDSV.focus();
+}</textarea></p>
+<noscript><p> * Javascript here * </p></noscript>
+
+<form action="#">
+<div class="TRY">
+<div class="CEN"><b>ISO 8601 : YYYY-MM-DD to YYYY-WW-D Demos</b>
+</div>
+<br>
+<label><input name="TDSV" value="yyyy-mm-dd" size="13" type="text">
+ a date in ISO 8601 format; (AD) 0-01-01 to 275760-09-13;</label><br>
+ &nbsp; &nbsp; <input name="BDSV" value="Convert" onclick="TryMtoW(this.form)" type="button">
+ &nbsp; returns Yr&lt;0 for an error, else array of Yr, Wk, Dy;<br>
+<label><input name="RDSV" value="" size="13" readonly="readonly" type="text">
+ if Yr&lt;0 then Error Message else Yr,Wk,Dy as an array of numbers.</label>
+<br><br>
+<label><input name="Incl" value="" size="13" readonly="readonly" type="text"><tt>
+ function YMD2YWD() </tt>is in
+ <a href="http://www.merlyn.demon.co.uk/include3.js">include3.js</a></label>
+<br><br>
+<label><input name="Rev" value="" size="13" readonly="readonly" type="text">
+ <tt style="background: aqua none repeat scroll 0%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">function YWDaToYMDa()</tt> from below</label>
+<br><br>
+</div>
+</form>
+
+<p><br>First Validate. Then save Day-of-Week, get nearest Thursday, save
+Time; go to January 4th, subtract from Time, round the Week difference.</p>
+
+
+
+<h4>YYYY-WW-D to YYYY-MM-DD, Array or Object</h4>
+
+<script type="text/javascript"> // ISO 8601 Date Converter
+
+function ReadISO8601YWD(Q) { // does not validate field ranges
+  if (Q.search(/^\d+-W\d\d-\d$/)!=0) { return -2 } // bad format
+  var j, T = Q.split(/\D+/)
+  for (j=0; j<=2; j++) T[j] = +T[j] // needed
+  return T }
+
+function YWDaToYMDa(A) { // 2005-03-28 : now UTC - much faster
+  with (new Date(Date.UTC(A[0], 0, 4))) { // ISO 8601
+    setUTCDate(getUTCDate() - (getUTCDay()+6)%7 + 7*A[1] + A[2]-8 )
+    return [getUTCFullYear(), getUTCMonth()+1, getUTCDate()] } }
+
+function YWDtoDatOb(Y, W, D) { // ISO 8601
+  var DOb = new Date(Y, 0, 3)
+  DOb.setDate( 3 - DOb.getDay() + (W-1)*7 + +D )
+  return DOb }
+
+function TryWtoM(F) { var A = [], Q = 'Not d+-Wdd-d',
+    S = ReadISO8601YWD(F.TDSV.value.trim())
+  F.RDSV.value = S<0 ? Q : A = YWDaToYMDa(S)
+  F.Dobj.value = S<0 ? Q : YWDtoDatOb(S[0], S[1], S[2])
+  F.Rev.value = YMDaToYWDa(A)
+  F.TDSV.focus() }
+
+ShoFFF(YWDaToYMDa, YWDtoDatOb, 0, ReadISO8601YWD, TryWtoM)
+
+</script><p align="center">
+<textarea readonly="readonly" wrap="virtual" style="border: thick double lightgreen;" cols="69" rows="14">function YWDaToYMDa(A) {
+    with (new Date(Date.UTC(A[0], 0, 4))) {
+        setUTCDate(getUTCDate() - (getUTCDay() + 6) % 7 + 7 * A[1] + A[2] - 8);
+        return [getUTCFullYear(), getUTCMonth() + 1, getUTCDate()];
+    }
+}
+
+function YWDtoDatOb(Y, W, D) {
+    var DOb = new Date(Y, 0, 3);
+    DOb.setDate(3 - DOb.getDay() + (W - 1) * 7 + +D);
+    return DOb;
+}
+
+function ReadISO8601YWD(Q) {
+    if (Q.search(/^\d+-W\d\d-\d$/) != 0) {
+        return -2;
+    }
+    var j, T = Q.split(/\D+/);
+    for (j = 0; j &lt;= 2; j++) {
+        T[j] = +T[j];
+    }
+    return T;
+}
+
+function TryWtoM(F) {
+    var A = [], Q = "Not d+-Wdd-d", S = ReadISO8601YWD(F.TDSV.value.trim());
+    F.RDSV.value = S &lt; 0 ? Q : A = YWDaToYMDa(S);
+    F.Dobj.value = S &lt; 0 ? Q : YWDtoDatOb(S[0], S[1], S[2]);
+    F.Rev.value = YMDaToYWDa(A);
+    F.TDSV.focus();
+}</textarea></p>
+<noscript><p> * Javascript here * </p></noscript>
+
+<form action="#">
+<div class="TRY">
+<div class="CEN"><b>ISO 8601 : YYYY-WW-D to YYYY-MM-DD Demo</b>
+</div>
+<br>
+<label><input name="TDSV" value="yyyy-Www-d" size="13" type="text">
+ a date in ISO 8601 Year-Week-Day format;</label><br>
+ &nbsp; &nbsp; <input name="BDSV" value="Convert" onclick="TryWtoM(this.form)" type="button">
+ &nbsp; returns Yr&lt;0 for an error, else array of Yr, Mo, Dy;<br>
+<label><input name="RDSV" value="" size="13" readonly="readonly" type="text">
+ if Yr&lt;0 then Error Message else Yr,Mo,Dy as an array of numbers</label>
+<br>
+<label><input name="Dobj" value="" size="35" readonly="readonly" type="text">
+ Date Object.</label>
+<br><br>
+<label><input name="Rev" value="" size="13" readonly="readonly" type="text">
+ <tt style="background: aqua none repeat scroll 0%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">function YMDaToYWDa()</tt> from above</label>
+<br><br>
+</div>
+</form>
+
+<p><br>Basically, put Year Jan 4th into a date object, getDay(), then use
+setDate() to move back 0..6 days to Monday and to add (WW-1)*7 days for
+the start of the week.</p>
+
+
+
+
+<h4>DayCount Routines</h4>
+
+<p>A direct routine for <a href="http://www.merlyn.demon.co.uk/miscdate.htm#CMJD">CMJD</a> to
+Year-Week-Day, and a new direct reverse routine, with CMJD to/from
+Year-Month-Day and Year-Month-Day to/from Year-Week-Day using them :-</p>
+
+<script type="text/javascript">
+
+function YMDCMJDYWD(A) {
+  return CMJDtoYWD(YMDzuCMJD(A[0], A[1], A[2])) }
+
+function YWDCMJDYMD(A) { return CMJDzuYMD(YWDtoCMJD(A)) }
+
+function TryCMJDtoYWD(F) { var CMJD
+  F.CMJD.value = CMJD = 40587 +
+    new Date(F.YMD.value.split(/\D+/).join('/')+' GMT')/864e5
+  F.YWD.value = ISOWstr(CMJDtoYWD(CMJD)) }
+
+function TryYWDtoCMJD(F) { var D
+  F.CMJD.value = D = YWDtoCMJD(F.YWD.value.split(/\D+/))
+  D = new Date((D - 40587)*864e5)
+  F.YMD.value = D.getUTCFullYear() + '-'
+    + LZ(D.getUTCMonth()+1) + '-' + LZ(D.getUTCDate()) }
+
+function BigTest() {
+  var CMJD, CMJD0=150000, YWD, Res, Dif, Errs=Sum=0, St
+  St = "<pre> CMJD  yyyy-Www-d   CMJD  ?\n"
+  for (CMJD=CMJD0-140000 ; CMJD < CMJD0 ; CMJD+=363) { // > 400 yrs
+    YWD = CMJDtoYWD(CMJD)
+    Res = YWDtoCMJD(YWD)
+    Dif = Res - CMJD
+    Sum += Dif ; if (Dif) Errs++
+    St += CMJD + "  " +
+      ISOWstr(YWD) + "  " + Res + "  " + Dif + (Dif?" #\n":"\n") }
+  document.writeln(St +
+    "Errors " + Errs + ", Sum " + Sum + "<\/pre>") }
+
+
+ShoFFF(CMJDtoYWD, YWDtoCMJD, CMJDzuYMD, YMDzuCMJD, 0,
+  YMDCMJDYWD, YWDCMJDYMD, TryCMJDtoYWD, TryYWDtoCMJD, BigTest)
+
+</script><p align="center">
+<textarea readonly="readonly" wrap="virtual" style="border: thick double lightgreen;" cols="69" rows="49">function CMJDtoYWD(CMJD) {
+    var d4, L, d1, WeekNumber, Bodge, DoW;
+    CJD = CMJD + 2400001;
+    DoW = CJD % 7;
+    d4 = (CJD + 31741 - DoW) % 146097 % 36524 % 1461;
+    L = +(d4 == 1460);
+    d1 = ((d4 - L) % 365) + L;
+    WeekNumber = ((d1 / 7) | 0) + 1;
+    Bodge = CJD - 7 * (WeekNumber - 26);
+    Bodge = ((Bodge / 365.2425) | 0) - 4712;
+    return [Bodge, WeekNumber, 1 + DoW];
+}
+
+function YWDtoCMJD(YWD) {
+    var CJD, y;
+    y = YWD[0] - 1;
+    CJD = 1721429 + (1461 * y &gt;&gt; 2) - ((y / 100) | 0) + ((y / 400) | 0);
+    CJD -= CJD % 7;
+    CJD += YWD[1] * 7 + +YWD[2] - 8;
+    return CJD - 2400001;
+}
+
+function CMJDzuYMD(CMJD) {
+    var Y = 0, M = 0, t, d = CMJD + 678881;
+    t = (((4 * (d + 36525)) / 146097) | 0) - 1;
+    Y += 100 * t;
+    d -= 36524 * t + (t &gt;&gt; 2);
+    t = (((4 * (d + 366)) / 1461) | 0) - 1;
+    Y += t;
+    d -= 365 * t + (t &gt;&gt; 2);
+    M = ((5 * d + 2) / 153) | 0;
+    d -= (((2 + M * 153) / 5) | 0);
+    if (M &gt; 9) {
+        M -= 12;
+        Y++;
+    }
+    return [Y, M + 3, ++d];
+}
+
+function YMDzuCMJD(y, m, d) {
+    if (m &lt; 3) {
+        m += 12;
+        y--;
+    }
+    return -678973 + d + (((153 * m - 2) / 5) | 0) + (1461 * y &gt;&gt; 2) - ((y / 100) | 0) + ((y / 400) | 0);
+}
+
+function YMDCMJDYWD(A) {
+    return CMJDtoYWD(YMDzuCMJD(A[0], A[1], A[2]));
+}
+
+function YWDCMJDYMD(A) {
+    return CMJDzuYMD(YWDtoCMJD(A));
+}
+
+function TryCMJDtoYWD(F) {
+    var CMJD;
+    F.CMJD.value = CMJD = 40587 + new Date(F.YMD.value.split(/\D+/).join("/") + " GMT") / 86400000;
+    F.YWD.value = ISOWstr(CMJDtoYWD(CMJD));
+}
+
+function TryYWDtoCMJD(F) {
+    var D;
+    F.CMJD.value = D = YWDtoCMJD(F.YWD.value.split(/\D+/));
+    D = new Date((D - 40587) * 86400000);
+    F.YMD.value = D.getUTCFullYear() + "-" + LZ(D.getUTCMonth() + 1) + "-" + LZ(D.getUTCDate());
+}
+
+function BigTest() {
+    var CMJD, CMJD0 = 150000, YWD, Res, Dif, Errs = Sum = 0, St;
+    St = "&lt;pre&gt; CMJD  yyyy-Www-d   CMJD  ?\n";
+    for (CMJD = CMJD0 - 140000; CMJD &lt; CMJD0; CMJD += 363) {
+        YWD = CMJDtoYWD(CMJD);
+        Res = YWDtoCMJD(YWD);
+        Dif = Res - CMJD;
+        Sum += Dif;
+        if (Dif) {
+            Errs++;
+        }
+        St += CMJD + "  " + ISOWstr(YWD) + "  " + Res + "  " + Dif + (Dif ? " #\n" : "\n");
+    }
+    document.writeln(St + "Errors " + Errs + ", Sum " + Sum + "&lt;/pre&gt;");
+}</textarea></p>
+<noscript><p> * Javascript here * </p></noscript>
+
+<form class="TRY" action="#">
+<div class="CEN">
+Test<tt> CMJDToYWD </tt>and<tt> YWDtoCMJD</tt>
+<br><label>Y M D &nbsp;
+<input name="YMD" value="2005-02-15" size="12" type="text"></label>
+&nbsp;
+<input name="M" value=" -&gt; " onclick="TryCMJDtoYWD(this.form)" type="button">
+&nbsp;
+<input readonly="readonly" name="CMJD" size="9" type="text">
+&nbsp;
+<input name="W" value=" &lt;- " onclick="TryYWDtoCMJD(this.form)" type="button">
+&nbsp;
+<label><input name="YWD" value="?" size="12" type="text">
+&nbsp; Y W D</label>
+<br>Accepts moderately unreasonable dates
+<br><input value="BigTest" onclick="BigTest()" type="button">
+<br>One day per year for over 400 years.
+</div>
+</form>
+
+<p>Note that routines using CMJD are comparatively fast.</p>
+
+
+<h4>Try All Javascript ISO Week Number Conversions</h4>
+
+<p>Given the straightforward handling of the Week and Day components
+in conversions from YWD to ordinary date, it seems sufficient to test
+just over one day per year for over 400 years.</p>
+
+<script type="text/javascript">
+
+function YMDarrToDob(A) { return new Date(A[0], A[1]-1, A[2]) }
+
+function TestAllISO(F) { // F.Rpt.rows = 4
+  var CMJD, CMJD0=150000, YWD, Res, WNS, Dob, Str, YR, MO, DY
+  for (CMJD=CMJD0-140000 ; CMJD < CMJD0 ; CMJD+=363) { // 400+ yrs
+    with ( Dob = new Date(1858, 10, 17+CMJD) ) { // local
+      YR = getFullYear() ; MO = getMonth()+1 ; DY = getDate() }
+
+    YWD = CMJDtoYWD(CMJD) ; Res = YWDtoCMJD(YWD)
+    WNS = ISOWstr(YWD)
+    if (Res != CMJD) {
+      F.Rpt.value = 'E0 :-  ' + CMJD + '  ' + WNS + '  ' + Res
+      return }
+
+    function Chk(YWD, Res, J) { var Str = ISOWstr(YWD)
+      var Bad = +Dob != +Res || Str != WNS
+      if (Bad) { F.Rpt.rows = 4 ; F.Rpt.value =
+        'E' + J + ' :-\n' + Dob + '\n' + Str + '\n' + Res }
+      return Bad }
+
+    if ( Chk(YWD = DobToYWD(Dob), YWDtoDob(YWD), 1) ) return
+    if ( Chk(YWD = YMD2YWD(YR, MO, DY), YWDtoDob(YWD), 2) ) return
+    if ( Chk(YWD = YMDaToYWDa([YR, MO, DY]),
+      YWDtoDatOb(YWD[0], YWD[1], YWD[2]), 3) ) return
+    if ( Chk(YWD = OddWkNo2(Dob, 1, 4),
+      OffWkNo2(YWD, 1, 4), 4) ) return // see below
+    if ( Chk(YWD, YMDarrToDob(YWDaToYMDa(YWD)), 5) ) return
+    if ( Chk(YWD,
+      YWDtoDob(YMDCMJDYWD(YWDCMJDYMD(YWD))), 6) ) return
+    }
+  F.Rpt.rows = 1 ; F.Rpt.value = ' OK ' }
+
+
+function TimeAllISO(F) {
+  var D = [], J, K, N = 0, X, A = [2005, 11, 6],
+    Dno = +new Date() + 34*F.T.value
+  while (Dno > +new Date()) N++ // initialise loop count N
+
+  J = 0
+  D[J++] = new Date() ; K = N ; while (K--) X = Dno // dummy
+
+  D[J++] = new Date() ; K = N ; while (K--) X = YMDtoCMJD(2222,2,2)
+  D[J++] = new Date() ; K = N ; while (K--) X = CMJDtoYMD(6e4)
+  D[J++] = new Date() ; K = N ; while (K--) X = YMDzuCMJD(2222,2,2)
+  D[J++] = new Date() ; K = N ; while (K--) X = CMJDzuYMD(6e4)
+  D[J++] = new Date() ; K = N ; while (K--) X = CMJDtoYWD(6e4)
+  D[J++] = new Date() ; K = N ; while (K--) X = YWDtoCMJD(A)
+
+  D[J++] = new Date() ; K = N ; while (K--) X = YMDCMJDYWD(2222,2,2)
+  D[J++] = new Date() ; K = N ; while (K--) X = DobToYWD(Dno)
+  D[J++] = new Date() ; K = N ; while (K--) X = YMD2YWD(2222,2,2)
+  D[J++] = new Date() ; K = N ; while (K--) X = YMDaToYWDa(A)
+  D[J++] = new Date() ; K = N ; while (K--) X = OddWkNo2(Dno, 1, 4)
+
+  D[J++] = new Date() ; K = N ; while (K--) X = YWDCMJDYMD(A)
+  D[J++] = new Date() ; K = N ; while (K--) X = YWDtoDob(A)
+  D[J++] = new Date() ; K = N ; while (K--) X = YWDtoDatOb(2222,2,2)
+  D[J++] = new Date() ; K = N ; while (K--) X = YWDaToYMDa(A)
+  D[J++] = new Date() ; K = N ; while (K--) X = OffWkNo2(A, 1, 4)
+  D[J++] = new Date()
+
+  F.Rpt.rows = J+5
+  J = 0
+  F.Rpt.value = '\t' + N + ' loops\t:\tTime, ms' +
+    '\n\toverhead\t:\t'   + -(D[J]-D[++J]) +
+
+    '\nTo/from CMJD :' +
+    '\n\tYMDtoCMJD\t:\t'  + -(D[J]-D[++J]) +
+    '\n\tCMJDtoYMD\t:\t'  + -(D[J]-D[++J]) +
+    '\n\tYMDzuCMJD\t:\t'  + -(D[J]-D[++J]) +
+    '\n\tCMJDzuYMD\t:\t'  + -(D[J]-D[++J]) +
+    '\n' +
+    '\n\tCMJDtoYWD\t:\t'  + -(D[J]-D[++J]) +
+    '\n\tYWDtoCMJD\t:\t'  + -(D[J]-D[++J]) +
+
+    '\nGreg to [YWD] :' +
+    '\n\tYMDCMJDYWD\t:\t' + -(D[J]-D[++J]) +
+    '\n\tDobToYWD\t:\t'   + -(D[J]-D[++J]) +
+    '\n\tYMD2YWD \t:\t'   + -(D[J]-D[++J]) +
+    '\n\tYMDaToYWDa\t:\t' + -(D[J]-D[++J]) +
+    '\n\tOddWkNo2\t:\t'   + -(D[J]-D[++J]) +
+
+    '\n[YWD]to Greg :' +
+    '\n\tYWDCMJDYMD\t:\t' + -(D[J]-D[++J]) +
+    '\n\tYWDtoDob\t:\t'   + -(D[J]-D[++J]) +
+    '\n\tYWDtoDatOb\t:\t' + -(D[J]-D[++J]) +
+    '\n\tYWDaToYMDa\t:\t' + -(D[J]-D[++J]) +
+    '\n\tOffWkNo2\t:\t'   + -(D[J]-D[++J]) +
+
+    '\nTotal test time\t\t:\t' + (D[J]-D[0])
+   }
+
+ShoFFF(YMDarrToDob, TestAllISO, 0, TimeAllISO)
+
+</script><p align="center">
+<textarea readonly="readonly" wrap="virtual" style="border: thick double lightgreen;" cols="69" rows="55">function
+YMDarrToDob(A) { return new Date(A[0], A[1] - 1, A[2]);
+}
+function TestAllISO(F) { var CMJD, CMJD0 = 150000, YWD, Res, WNS, Dob,
+Str, YR, MO, DY; for (CMJD = CMJD0 - 140000; CMJD &lt; CMJD0; CMJD +=
+363) { with (Dob = new Date(1858, 10, 17 + CMJD)) { YR = getFullYear();
+MO = getMonth() + 1; DY = getDate(); } YWD = CMJDtoYWD(CMJD); Res =
+YWDtoCMJD(YWD); WNS = ISOWstr(YWD); if (Res != CMJD) { F.Rpt.value =
+"E0 :- " + CMJD + " " + WNS + " " + Res; return; } function Chk(YWD,
+Res, J) { var Str = ISOWstr(YWD); var Bad = +Dob != +Res || Str != WNS;
+if (Bad) { F.Rpt.rows = 4; F.Rpt.value = "E" + J + " :-\n" + Dob + "\n"
++ Str + "\n" + Res; } return Bad; } if (Chk(YWD = DobToYWD(Dob),
+YWDtoDob(YWD), 1)) { return; } if (Chk(YWD = YMD2YWD(YR, MO, DY),
+YWDtoDob(YWD), 2)) { return; } if (Chk(YWD = YMDaToYWDa([YR, MO, DY]),
+YWDtoDatOb(YWD[0], YWD[1], YWD[2]), 3)) { return; } if (Chk(YWD =
+OddWkNo2(Dob, 1, 4), OffWkNo2(YWD, 1, 4), 4)) { return; } if (Chk(YWD,
+YMDarrToDob(YWDaToYMDa(YWD)), 5)) { return; } if (Chk(YWD,
+YWDtoDob(YMDCMJDYWD(YWDCMJDYMD(YWD))), 6)) { return; } } F.Rpt.rows =
+1; F.Rpt.value = " OK ";
+}
+function TimeAllISO(F) { var D = [], J, K, N = 0, X, A = [2005, 11, 6],
+Dno = +new Date() + 34 * F.T.value; while (Dno &gt; +new Date()) { N++;
+} J = 0; D[J++] = new Date(); K = N; while (K--) { X = Dno; } D[J++] =
+new Date(); K = N; while (K--) { X = YMDtoCMJD(2222, 2, 2); } D[J++] =
+new Date(); K = N; while (K--) { X = CMJDtoYMD(60000); } D[J++] = new
+Date(); K = N; while (K--) { X = YMDzuCMJD(2222, 2, 2); } D[J++] = new
+Date(); K = N; while (K--) { X = CMJDzuYMD(60000); } D[J++] = new
+Date(); K = N; while (K--) { X = CMJDtoYWD(60000); } D[J++] = new
+Date(); K = N; while (K--) { X = YWDtoCMJD(A); } D[J++] = new Date(); K
+= N; while (K--) { X = YMDCMJDYWD(2222, 2, 2); } D[J++] = new Date(); K
+= N; while (K--) { X = DobToYWD(Dno); } D[J++] = new Date(); K = N;
+while (K--) { X = YMD2YWD(2222, 2, 2); } D[J++] = new Date(); K = N;
+while (K--) { X = YMDaToYWDa(A); } D[J++] = new Date(); K = N; while
+(K--) { X = OddWkNo2(Dno, 1, 4); } D[J++] = new Date(); K = N; while
+(K--) { X = YWDCMJDYMD(A); } D[J++] = new Date(); K = N; while (K--) {
+X = YWDtoDob(A); } D[J++] = new Date(); K = N; while (K--) { X =
+YWDtoDatOb(2222, 2, 2); } D[J++] = new Date(); K = N; while (K--) { X =
+YWDaToYMDa(A); } D[J++] = new Date(); K = N; while (K--) { X =
+OffWkNo2(A, 1, 4); } D[J++] = new Date(); F.Rpt.rows = J + 5; J = 0;
+F.Rpt.value = " " + N + " loops : Time, ms" + "\n overhead : " + -(D[J]
+- D[++J]) + "\nTo/from CMJD :" + "\n YMDtoCMJD : " + -(D[J] - D[++J]) +
+"\n CMJDtoYMD : " + -(D[J] - D[++J]) + "\n YMDzuCMJD : " + -(D[J] -
+D[++J]) + "\n CMJDzuYMD : " + -(D[J] - D[++J]) + "\n" + "\n CMJDtoYWD :
+" + -(D[J] - D[++J]) + "\n YWDtoCMJD : " + -(D[J] - D[++J]) + "\nGreg
+to [YWD] :" + "\n YMDCMJDYWD : " + -(D[J] - D[++J]) + "\n DobToYWD : "
++ -(D[J] - D[++J]) + "\n YMD2YWD : " + -(D[J] - D[++J]) + "\n
+YMDaToYWDa : " + -(D[J] - D[++J]) + "\n OddWkNo2 : " + -(D[J] - D[++J])
++ "\n[YWD]to Greg :" + "\n YWDCMJDYMD : " + -(D[J] - D[++J]) + "\n
+YWDtoDob : " + -(D[J] - D[++J]) + "\n YWDtoDatOb : " + -(D[J] - D[++J])
++ "\n YWDaToYMDa : " + -(D[J] - D[++J]) + "\n OffWkNo2 : " + -(D[J] -
+D[++J]) + "\nTotal test time : " + (D[J] - D[0]);
+}</textarea></p>
+<noscript><p> * Javascript here * </p></noscript>
+
+<form class="TRY" action="#">
+<div class="CEN">
+Testing other functions against<tt> CMJDtoYWD </tt><br>
+<input value="TestAllISO" onclick="TestAllISO(this.form)" type="button">
+<br><textarea name="Rpt" rows="4" cols="64" readonly="readonly"></textarea>
+<br>Time each for about
+ <input name="T" size="4" value="10" type="text"> seconds overall<br>
+<input value="TimeAllISO" onclick="TimeAllISO(this.form)" type="button">
+</div>
+</form>
+
+<p>I have some more <a href="http://www.merlyn.demon.co.uk/js-dates.htm">Javascript</a> for date
+conversions, and a little <a href="http://www.merlyn.demon.co.uk/vb-dates.htm">VBscript</a>.</p>
+
+
+
+<h3><a name="DB">DOS Batch</a></h3>
+
+<p>In unaided DOS..Win98/ME, date calculations cannot reasonably be
+done.</p>
+
+<p>My NOWMINUS and ENVICALC are batch-enhancing programs for date/time
+work and for integer arithmetic; get Pascal source and executable via
+<a href="http://www.merlyn.demon.co.uk/programs/00index.htm">programs</a>.</p>
+
+<pre class="SRC">  NOWMINUS F5  J0 L6 Eisoweekno	; set env. ISOWEEKNO to ISO     YYYYWW
+  NOWMINUS F33 J0 L6 Etaxweekno	; set env. TAXWEEKNO to UK HMRC YYYYWW
+
+For an absolute week count, from BC 4713,
+
+  NOWMINUS F9 EDN		  ; set CJD in env. DN, then
+  ENVICALC    CDN 3 - 7 / B6 EWN  ; set Local AbsWkNo in env. WN
+
+Adjust the value of 3 by up to ±3 to get the desired first day of the
+week (..., Mon, ...); put   N -   after / to alter the zero week by N.
+</pre>
+
+<p>See also in <a href="http://www.merlyn.demon.co.uk/batfiles.htm#Other">MS-DOS Batch Files</a>, and
+WSH below this.</p>
+
+
+
+<h3><a name="NXB">NT/XP Batch</a></h3>
+
+<p>In Windows NT, XP, etc., batch, it should be possible to code most or
+all common date/time work; but I have no means of testing such code.</p>
+
+
+
+<h3><a name="VB">VBscript</a></h3>
+
+<p>See my code in <a href="http://www.merlyn.demon.co.uk/vb-date2.htm#WN">VBscript Date and Time 2</a>
+- for all valid years.</p>
+
+<p>Note that<tt>
+DatePart("ww", <i>Date</i>, vbMonday, vbFirstFourDays)
+</tt>is not always satisfactory.</p>
+
+
+
+
+<h3><a name="WSH">Windows Scripting Host</a></h3>
+
+<p>WSH can execute javascript and VBscript; see
+in <a href="http://www.merlyn.demon.co.uk/batfiles.htm#WSH">MS-DOS Batch Files</a>.</p>
+
+
+
+
+<h3><a name="PD">Pascal/Delphi</a></h3>
+
+<p>My Pascal unit <a href="http://www.merlyn.demon.co.uk/programs/dateprox.pas">dateprox.pas</a>,
+tested by program <a href="http://www.merlyn.demon.co.uk/programs/mjd_date.pas">mjd_date.pas</a>
+with included <a href="http://www.merlyn.demon.co.uk/programs/version.pas">version.pas</a>
+(BP7; Delphi&nbsp;3 at least) can calculate week number
+(ISO, Tax &amp; otherwise) from date, by first principles.
+Program <a href="http://www.merlyn.demon.co.uk/programs/mjd_date.exe">mjd_date.exe</a>
+was used for :-</p>
+
+<ul>
+ <li>Page <a href="http://www.merlyn.demon.co.uk/week-cal.txt">week-cal.txt</a> showing ISO 8601
+  weeks, with numbers, for 1970-2030.
+ </li><li>Page <a href="http://www.merlyn.demon.co.uk/uktaxcal.txt">uktaxcal.txt</a> showing HM
+  Revenue and Customs Tax weeks, with numbers, for 1970-2030.
+ </li></ul>
+
+<p>Peter Haas has written <a href="http://delphi.pjh2.de/units/download/DTWeeks.zip">Delphi
+Week Number</a> code, ISO &amp; otherwise (ZIP).</p>
+
+
+
+
+<h3><a name="GWF">GAWK &amp; C</a></h3>
+
+<p>ISO week number code for 1970-2099, independent of<tt> strftime(), </tt>
+is tested in <a href="http://www.merlyn.demon.co.uk/programs/iso-wkno.awk">programs/iso-wkno.awk</a>.
+Presumably C code would be similar.</p>
+
+
+
+<h3><a name="KX">KiXtart</a></h3>
+
+<p>See <a href="http://www.kixtart.org/cgi-bin/ultimatebb.cgi?ubb=get_topic&amp;f=12&amp;t=000440#00">
+Richard Howarth</a> in KiXtart Bulletin Board.</p>
+
+
+
+<h3><a name="SQL">SQL Server</a></h3>
+
+<p>I've been sent the following code to determine the start of the ISO
+Week-Numbering Year; I think it's for SQL Server.</p>
+
+<pre class="SRC"> Truncate(date_0, 'IY') = Truncate(Truncate(Truncate(date_0, 'IW') + 3, 'YEAR') + 3, 'IW')
+</pre>
+
+<p>"<i>Truncate(date, 'IW') truncates an input date to the nearest Monday
+(ISO Week start), Truncate(date, 'YEAR') returns calendar year start,
+and '+&nbsp;3' means 'plus 3 days'</i>". That amounts to "go to the
+nearest Thursday, go to January 4th of that calendar year, go to the
+start of that week", which is appropriate.</p>
+
+
+
+
+<h3><a name="Perl">Perl</a></h3>
+
+<p>I don't know, or have, Perl.</p>
+
+<p>Revised Perl code contributed by <!-- Mail --> Robert Urban
+(2002-08-13),
+which I have not been able to test, is in
+<a href="http://www.merlyn.demon.co.uk/programs/what-cw.pl">programs/what-cw.pl</a>.
+It uses only basic arithmetic operations. Check it before use.</p>
+
+<p>However, Harry Broomhall wrote (2002-08-18)
+<!-- news:d.t.p, mail ff. --> :-</p>
+
+<blockquote>
+
+<p>There are many time/date-based modules/libraries for Perl,
+but, IMHO, the one known as <a href="http://www.cpan.org/">Date::Calc</a> is the most comprehensive,
+and the most mature. Quoting this name is generally the standard
+response to questions about date-handling in newsgroups/lists.</p>
+
+<p>Date::Calc can be retrieved from CPAN (the major repository of
+Perl libraries). The module includes a *lot* of utilities to cover
+most requirements for 'normal' civil uses (<i>i.e.</i> it doesn't
+include astro requirements, or odd calendars such as Mayan).</p>
+
+<p>A working example (<tt>weekno.pl</tt>) to get week-numbers from
+a date (passed on the command line) is as follows :-</p>
+
+<pre class="SRC">#!/usr/bin/perl -w
+use strict;
+use Date::Calc qw(Week_of_Year);
+my ($wn, $yr);
+($wn, $yr) = Week_of_Year($ARGV[0], $ARGV[1], $ARGV[2]);
+print "$wn of $yr\n";
+</pre>
+
+</blockquote>
+
+<p>The author of Date::Calc clearly recognises ISO 8601 as the standard to
+use.</p>
+
+<p>David Rolsky's <a href="http://search.cpan.org/%7Edrolsky/DateTime-0.25/lib/DateTime.pm">
+search.cpan.org: DateTime - A date and time object</a> (2003)
+has ISO week numbers. Looks promising. May be part of
+<a href="http://datetime.perl.org/">The Perl DateTime Project</a>.</p>
+
+
+<p>I don't know, or have, Perl.</p>
+
+
+
+
+
+<h2><a name="NIP">Non-ISO Week Number Programming</a></h2>
+
+<p>See in <a href="http://www.merlyn.demon.co.uk/weekinfo.htm#Non">Calendar Weeks</a>.</p>
+
+<p>These examples are in javascript, but might be adapted for other
+languages. Adapting for Week-of-Month should be obvious.</p>
+
+<p>Alas, Financial Years may not approximate to Calendar or ISO
+Week-Numbering Years; then, the code for Types 1 &amp; 2 will need
+modification.</p>
+
+<p>For specific uses, the fixed parameter values can be incorporated
+into the code.</p>
+
+<p>In each case, the Date Object should represent a time near midnight,
+and is not altered; and Week Number is an array [Y, W, D] of Numbers.</p>
+
+
+
+<h4>Common Functions</h4>
+
+<p>This returns a string to represent non-standard week numbers.</p>
+
+<script type="text/javascript">
+
+function ywkdStr(A) { return A[0] + "wk" + LZ(A[1]) + "d" + A[2] }
+
+ShoFFF(ywkdStr)
+
+</script><p align="center">
+<textarea readonly="readonly" wrap="virtual" style="border: thick double lightgreen;" cols="69" rows="3">function ywkdStr(A) {
+    return A[0] + "wk" + LZ(A[1]) + "d" + A[2];
+}</textarea></p>
+<noscript><p> * Javascript here * </p></noscript>
+
+
+
+
+<h3><a name="T1">Type 1. Year Number is always Calendar Year</a></h3>
+
+<p>Therefore, weeks 01 and 52 may be, and 53 will, be partial.</p>
+
+<script type="text/javascript">
+
+function OddWkNo1(D, d1, d2) { // D a Date Object with time ~ 0
+  // d1 fixes JS day 0..6 that starts each week; undef to use Jan 1
+  // if d2 is defined, then it shifts the week; calendar-row count
+  var Yr = D.getFullYear(), Jan1 = new Date(Yr, 0, 1), Q
+  Q = Math.round((D-Jan1)/864e5) // 0-based day of year
+  if (d1!=null) Q -= ( 7+d1 - Jan1.getDay() ) % 7
+  if (d2!=null) Q += d2
+  return [ Yr, (1 + Q/7)|0, 1+(7+Q)%7 ] }
+
+
+function OffWkNo1(A, d1, d2) { var Q=0 // comment as above
+  if (d1!=null) Q = ( 7+d1 - new Date(A[0], 0, 1).getDay() ) % 7
+  if (d2!=null) Q -= d2
+  return new Date(A[0], 0, (A[1]-1)*7 + A[2] + Q) }
+
+
+function TryNSWN1(F) { var D = new Date(F.MyYMD1.value)
+  function ZS(x) { var u ; return x==u ? " " : x }
+  function QQ1(D, d1, d2) { var Q
+    return ZS(d1) + "  " + ZS(d2) + "  " +
+      ywkdStr(Q=OddWkNo1(D, d1, d2)) +
+      " " + OffWkNo1(Q, d1, d2).ISOlocaldateStr() }
+  F.MyRslt.value = D.YMDDstr() +
+    "\t\t    d1 d2   OddWkNo1   OffWkNo1" +
+    "\n+ For Week 1 = Jan 1st-7th : " + QQ1(D) +
+    "\n* For Week 1 = 1st Sun-Sat : " + QQ1(D, 0) +
+    "\n* For Week 1 = 1st Mon-Sun : " + QQ1(D, 1) +
+    "\n# For Week 1 = Sun-Sat row : " + QQ1(D, 6, 6) +
+    "\n# For Week 1 = Mon-Sun row : " + QQ1(D, 0, 6) }
+
+
+function MoreTest1() { var OK = "OK", Str
+  function Z1(D, d1, d2) { var Q, R
+    Q = OddWkNo1(D, d1, d2) ; R = OffWkNo1(Q, d1, d2)
+    if (+R != +D) OK = D + "\n" + Q + "\n" + R
+    return "  " + ywkdStr(Q) }
+  function Some1(DS, N) { var D = new Date(DS), T, St ='<i>'
+    while (N--) {
+      St += D.YMDDstr() +
+        Z1(D) + Z1(D, 0) + Z1(D, 1) + Z1(D, 6, 6) + Z1(D, 0, 6)
+      D.setDate(T=D.getDate()+1)
+      if (T==32) St += '<\/i>' }
+    return St + "\n" }
+  Str = "<pre>YYYY/MM/DD DoY Jan 1st-7th " +
+    "1st Sun-Sat 1st Mon-Sun Sun-Sat row Mon-Sun row\n" +
+  Some1('2004/12/24', 16) +
+  Some1('2005/12/24', 16) +
+  Some1('2006/12/24', 16)
+  document.writeln(Str + 'Reversals: ' + OK + '<\/pre>') }
+
+
+ShoFFF(OddWkNo1, OffWkNo1, 0, TryNSWN1)
+PopBtn(MoreTest1)
+
+</script><p align="center">
+<textarea readonly="readonly" wrap="virtual" style="border: thick double lightgreen;" cols="69" rows="23">function
+OddWkNo1(D, d1, d2) { var Yr = D.getFullYear(), Jan1 = new Date(Yr, 0,
+1), Q; Q = Math.round((D - Jan1) / 86400000); if (d1 != null) { Q -= (7
++ d1 - Jan1.getDay()) % 7; } if (d2 != null) { Q += d2; } return [Yr,
+(1 + Q / 7) | 0, 1 + (7 + Q) % 7];
+}
+function OffWkNo1(A, d1, d2) { var Q = 0; if (d1 != null) { Q = (7 + d1
+- (new Date(A[0], 0, 1)).getDay()) % 7; } if (d2 != null) { Q -= d2; }
+return new Date(A[0], 0, (A[1] - 1) * 7 + A[2] + Q);
+}
+function TryNSWN1(F) { var D = new Date(F.MyYMD1.value); function ZS(x)
+{ var u; return x == u ? " " : x; } function QQ1(D, d1, d2) { var Q;
+return ZS(d1) + " " + ZS(d2) + " " + ywkdStr(Q = OddWkNo1(D, d1, d2)) +
+" " + OffWkNo1(Q, d1, d2).ISOlocaldateStr(); } F.MyRslt.value =
+D.YMDDstr() + " d1 d2 OddWkNo1 OffWkNo1" + "\n+ For Week 1 = Jan
+1st-7th : " + QQ1(D) + "\n* For Week 1 = 1st Sun-Sat : " + QQ1(D, 0) +
+"\n* For Week 1 = 1st Mon-Sun : " + QQ1(D, 1) + "\n# For Week 1 =
+Sun-Sat row : " + QQ1(D, 6, 6) + "\n# For Week 1 = Mon-Sun row : " +
+QQ1(D, 0, 6);
+}</textarea></p>
+<form name="JJ0"><input name="N" value="Pop Code Up" onclick="PopThis(this)" type="button"></form><noscript><p> * Javascript here * </p></noscript>
+
+
+<form action="#">
+<div class="TRY">
+Enter a date : &nbsp;
+<input name="MyYMD1" size="16" value="2005/03/08" type="text"> &nbsp;
+<input value=" Try " onclick="TryNSWN1(this.form)" type="button">
+&nbsp; <input value="MoreTest" onclick="MoreTest1()" type="button"><br>
+<textarea name="MyRslt" rows="6" cols="57" readonly="readonly">???</textarea>
+<br>+ Week 1 has 7 days, entirely within the calendar year.
+<br>* As +, and Week 0 of 1-6 days is possible.
+<br># Week 1 contains January 1, and may have 1-7 days.
+</div>
+</form>
+
+<p><tt>Week 1 = Sun-Sat row </tt>seems to be what Microsoft VBS<tt>
+datepart("ww", D) </tt>gives.</p>
+
+
+<h3><a name="T2">Type 2. Every Week has Seven Days</a></h3>
+<p>Therefore, the Year Number can differ from the Calendar Year,
+and must be returned.
+ISO 8601 Week Numbers are a specific case.</p>
+
+<p>These examples are for numberings in which Week 1 is
+more-or-less at the start of the calendar year.</p>
+
+<script type="text/javascript">
+
+function OddWkNo2(D, d1, d2) { // D a Date Object with time ~ 0
+  // d1 is JS day 0..6 of the first day of every week : ISO, d1=1
+  // d2 is JS day 0..6, first d2 of year fixes week 1 : ISO, d2=4
+  var ND, QQ, Y1, Yr, Wk, Dy
+  ND = new Date(+D) ; Dy = (7 + ND.getDay() - d1) % 7
+  QQ = (7 + d2 - d1) % 7 // Fixing-day d2 of week d1 as 0..6
+  ND.setDate(ND.getDate() - Dy + QQ) // Go to d2 of same d1 week
+  Yr = ND.getFullYear()
+  Y1 = new Date(Yr, 0, 1) ; QQ = Y1.getDay()
+  Y1.setDate(Y1.getDate() + (7 + d2 - QQ) % 7) // 1st d2 of CalYear
+  Wk = Math.round((ND - Y1)/(7*864e5)) // Round lest SummerTime
+  return [ Yr, ++Wk, ++Dy ] }
+
+
+function OffWkNo2(A, d1, d2) { var Q // comment as above
+  Q = ( 7 + d2 - new Date(A[0], 0, 1).getDay() ) % 7 // reach a d2
+  Q -= (7 + d2 - d1) % 7 // to start of d1 week
+  return new Date(A[0], 0, (A[1]-1)*7 + A[2] + Q) }
+
+
+function TryNSWN2(F) { var D = new Date(F.MyYMD2.value)
+  function QQ2(D, d1, d2) { var Q
+    return d1 + "  " + d2 + "  " + ywkdStr(Q=OddWkNo2(D, d1, d2)) +
+      " " + OffWkNo2(Q, d1, d2).ISOlocaldateStr() }
+  F.MyRslt.value = D.YMDDstr() +
+    "\t\t    d1 d2   OddWkNo2   OffWkNo2" +
+    "\n* For Week 1 = 1st Sun-Sat : " + QQ2(D, 0, 0) +
+    "\n* For Week 1 = 1st Mon-Sun : " + QQ2(D, 1, 1) +
+    "\n# For Week 1 = Sun-Sat row : " + QQ2(D, 0, 6) +
+    "\n# For Week 1 = Mon-Sun row : " + QQ2(D, 1, 0) +
+    "\n? For Week 1 = matches BBC : " + QQ2(D, 6, 4) +
+    "\n~ For Week 1 = matches ISO : " + QQ2(D, 1, 4) +
+    "\nFor ISO standard 8601:2000 : " + StrYWD(D) }
+
+
+function MoreTest2() { var OK = "OK", Str
+  function Z2(D, d1, d2) { var Q, R
+    Q = OddWkNo2(D, d1, d2) ; R = OffWkNo2(Q, d1, d2)
+    if (+R != +D) OK = D + "\n" + Q + "\n" + R
+    return "  " + ywkdStr(Q) }
+  function Some2(DS, N) { var D = new Date(DS), T, St = '<i>'
+    while (N--) {
+      St += D.YMDDstr() + " " + StrYWD(D) + Z2(D, 0, 0) +
+        Z2(D, 1, 1) + Z2(D, 0, 6) + Z2(D, 1, 0) + Z2(D, 1, 4) + "\n"
+      D.setDate(T=D.getDate()+1)
+      if (T==32) St += '<\/i>' }
+    return St + "\n" }
+  Str = '<pre>YYYY/MM/DD DoY ISO Wk-Num  ' +
+    '1st SunSat  1st MonSun  SunSat row  MonSun row  maybe ISO\n' +
+  Some2('2004/12/24', 16) +
+  Some2('2005/12/24', 16) +
+  Some2('2006/12/24', 16)
+  document.writeln(Str + 'Reversals: ' + OK + '<\/pre>') }
+
+
+function ISOtest() { var A1, A2, QQ, j, D = new Date("2001/01/01")
+  for (j=28*62 ; j-- ; ) { // over 28 years
+    A1 = DobToYWD(D) // known good
+    A2 = OddWkNo2(D, 1, 4)
+    QQ = OffWkNo2(A2, 1, 4)
+    if (A1[0]!=A2[0] || A1[1]!=A2[1] || A1[2]!=A2[2] || +QQ!=+D) {
+      alert ( 'D : ' + D +
+        '\nA1: ' + A1 + '\nA2: ' + A2 + '\nQQ: ' + QQ) ; return }
+    D.setDate(D.getDate()+6) }
+  alert('OK') }
+
+
+ShoFFF(OddWkNo2, OffWkNo2, 0, TryNSWN2)
+PopBtn(MoreTest2, ISOtest)
+
+</script><p align="center">
+<textarea readonly="readonly" wrap="virtual" style="border: thick double lightgreen;" cols="69" rows="21">function
+OddWkNo2(D, d1, d2) { var ND, QQ, Y1, Yr, Wk, Dy; ND = new Date(+D); Dy
+= (7 + ND.getDay() - d1) % 7; QQ = (7 + d2 - d1) % 7;
+ND.setDate(ND.getDate() - Dy + QQ); Yr = ND.getFullYear(); Y1 = new
+Date(Yr, 0, 1); QQ = Y1.getDay(); Y1.setDate(Y1.getDate() + (7 + d2 -
+QQ) % 7); Wk = Math.round((ND - Y1) / (604800000)); return [Yr, ++Wk,
+++Dy];
+}
+function OffWkNo2(A, d1, d2) { var Q; Q = (7 + d2 - (new Date(A[0], 0,
+1)).getDay()) % 7; Q -= (7 + d2 - d1) % 7; return new Date(A[0], 0,
+(A[1] - 1) * 7 + A[2] + Q);
+}
+function TryNSWN2(F) { var D = new Date(F.MyYMD2.value); function
+QQ2(D, d1, d2) { var Q; return d1 + " " + d2 + " " + ywkdStr(Q =
+OddWkNo2(D, d1, d2)) + " " + OffWkNo2(Q, d1, d2).ISOlocaldateStr(); }
+F.MyRslt.value = D.YMDDstr() + " d1 d2 OddWkNo2 OffWkNo2" + "\n* For
+Week 1 = 1st Sun-Sat : " + QQ2(D, 0, 0) + "\n* For Week 1 = 1st Mon-Sun
+: " + QQ2(D, 1, 1) + "\n# For Week 1 = Sun-Sat row : " + QQ2(D, 0, 6) +
+"\n# For Week 1 = Mon-Sun row : " + QQ2(D, 1, 0) + "\n? For Week 1 =
+matches BBC : " + QQ2(D, 6, 4) + "\n~ For Week 1 = matches ISO : " +
+QQ2(D, 1, 4) + "\nFor ISO standard 8601:2000 : " + StrYWD(D);
+}</textarea></p>
+<form name="JJ1"><input name="N" value="Pop Code Up" onclick="PopThis(this)" type="button"></form><noscript><p> * Javascript here * </p></noscript>
+
+<form action="#">
+<div class="TRY">
+Enter a date : &nbsp;
+<input name="MyYMD2" size="16" value="2005/03/08" type="text"> &nbsp;
+<input value=" Try " onclick="TryNSWN2(this.form)" type="button">
+&nbsp; <input value="MoreTest" onclick="MoreTest2()" type="button">
+&nbsp; <input value="ISOtest" onclick="ISOtest()" type="button"><br>
+<textarea name="MyRslt" rows="8" cols="57" readonly="readonly">???</textarea>
+<br>* Week 1 is entirely within the calendar year.
+<br># Week 1 contains January 1.
+<br>? See <a href="http://www.merlyn.demon.co.uk/weekinfo.htm#PW">Programme Weeks</a>
+<br>~ Not best ISO 8601 routine.
+</div>
+</form>
+
+
+
+
+<h3><a name="T3">Type 3. Week 01 begins on a Given Date</a></h3>
+
+<p>Therefore (unless that date is January 1st), the Year Number can
+differ from the Calendar Year, and Week 53 has one or two days.</p>
+
+<script type="text/javascript">
+
+function OddWkNo3(D, m1, d1) { // m1 = 1..12 & d1 are Week 1 Day 1
+  var dd, fy, m, d // UK FY m1=4 d1=6
+  m = D.getMonth()+1 ; d = D.getDate()
+  fy = D.getFullYear() - ( m*99+d < m1*99+d1 )
+  dd = Math.round((D - new Date(fy, m1-1, d1))/864e5)
+  return [ fy, (1+dd/7)|0, 1+dd%7 ] }
+
+
+function OffWkNo3(A, m1, d1) { // comment as above
+  return new Date(+A[0], m1-1, d1 + A[1]*7 + A[2] - 8) }
+
+
+function TryNSWN3(F) { var Q, S = "  ",
+    D = new Date(F.MyYMD3.value), A = F.FoY.value.split(/\D+/),
+    m1 = +A[0], d1 = +A[1]
+  F.MyRslt.value = D.YMDDstr() + S +
+    ywkdStr(Q=OddWkNo3(D, m1, d1)) + S +
+    OffWkNo3(Q, m1, d1).YMDDstr() }
+
+
+function MoreTest3(F) { var OK = "OK", Str,
+    A = F.FoY.value.split(/\D+/), m1 = +A[0], d1 = +A[1]
+  function Z3(D, d1, d2) { var Q, R
+    Q = OddWkNo3(D, d1, d2) ; R = OffWkNo3(Q, d1, d2)
+    if (+R != +D) OK = D + "\n" + Q + "\n" + R
+    return "  " + ywkdStr(Q) + "  " + R.ISOlocaldateStr() }
+  function Some3(DS, N) { var D = new Date(DS), T, St = '<i>'
+    while (N--) {
+      St += D.YMDDstr() + Z3(D, m1, d1) + "\n"
+      D.setDate(T=D.getDate()+1)
+      if (T==32)  St += '<\/i>' }
+    return St + "\n" }
+  Str = '<pre>YYYY/MM/DD DoY  yyyy-' +
+    LZ(m1) + '-' + LZ(d1) + '   OffWkNo3\n' +
+  Some3('2004/12/24', 16) +
+  Some3('2005/12/24', 16) +
+  Some3('2006/12/24', 16)
+  document.writeln(Str + 'Reversals: ' + OK + '<\/pre>') }
+
+
+ShoFFF(OddWkNo3, OffWkNo3, 0, TryNSWN3)
+PopBtn(MoreTest3)
+
+</script><p align="center">
+<textarea readonly="readonly" wrap="virtual" style="border: thick double lightgreen;" cols="69" rows="13">function OddWkNo3(D, m1, d1) {
+    var dd, fy, m, d;
+    m = D.getMonth() + 1;
+    d = D.getDate();
+    fy = D.getFullYear() - (m * 99 + d &lt; m1 * 99 + d1);
+    dd = Math.round((D - new Date(fy, m1 - 1, d1)) / 86400000);
+    return [fy, (1 + dd / 7) | 0, 1 + dd % 7];
+}
+
+function OffWkNo3(A, m1, d1) {
+    return new Date(+A[0], m1 - 1, d1 + A[1] * 7 + A[2] - 8);
+}
+
+function TryNSWN3(F) {
+    var Q, S = "  ", D = new Date(F.MyYMD3.value), A = F.FoY.value.split(/\D+/), m1 = +A[0], d1 = +A[1];
+    F.MyRslt.value = D.YMDDstr() + S + ywkdStr(Q = OddWkNo3(D, m1, d1)) + S + OffWkNo3(Q, m1, d1).YMDDstr();
+}</textarea></p>
+<form name="JJ2"><input name="N" value="Pop Code Up" onclick="PopThis(this)" type="button"></form><noscript><p> * Javascript here * </p></noscript>
+
+<form action="#">
+<div class="TRY">
+Enter a date : &nbsp;
+<input name="MyYMD3" size="12" value="2005/03/08" type="text"><br>
+Enter start of year : &nbsp;
+<input name="FoY" size="8" value="04/06" type="text"> &nbsp;
+<input value=" Try " onclick="TryNSWN3(this.form)" type="button">
+&nbsp; <input value="MoreTest" onclick="MoreTest3(this.form)" type="button"><br>
+<input name="MyRslt" size="43" value="???" readonly="readonly" type="text">
+</div>
+</form>
+
+
+
+<h4><a name="UKTW">HM Revenue and Customs Tax Weeks</a></h4>
+
+<p>UK HMRC (HM Revenue and Customs; was HM Inland Revenue)
+Tax Weeks are a particular case of Type 3.
+See in <a href="http://www.merlyn.demon.co.uk/weekinfo.htm#UKTW">Calendar Weeks</a>.</p>
+
+<p>These string functions are in <a href="http://www.merlyn.demon.co.uk/include3.js">include3.js</a>,
+take different parameters, and return text.</p>
+
+<script type="text/javascript">
+
+ShoFFF(UKtaxWNstr, UKtaxMNstr)
+
+function TaxTest() { var D = new Date(),
+  dy = D.getDate(), mo = D.getMonth()+1, yr = D.getFullYear()
+  document.write('By TaxTest() : Today is ', D.YMDDstr(),
+    ' ; thus it is :\n', UKtaxWNstr(yr, mo, dy),
+    UKtaxMNstr(yr, mo, dy), '\nOddWkNo3(D, 4, 6) : ',
+    ywkdStr(D=OddWkNo3(new Date(yr, mo-1, dy), 4, 6)),
+    ";  OffWkNo3 : ", OffWkNo3(D, 4, 6).ISOlocaldateStr()  ) }
+
+ShoDuu(TaxTest)
+
+</script><p align="center">
+<textarea readonly="readonly" wrap="virtual" style="border: thick double lightgreen;" cols="69" rows="21">function UKtaxWNstr(y, m, d) {
+    var dd, fy = y;
+    if (m * 32 + d &lt; 134) {
+        fy--;
+    }
+    dd = (Date.UTC(y, m - 1, d) - Date.UTC(fy, 3, 6)) / 86400000;
+    return "UK Revenue &amp; Customs:" + " Year " + fy + " week " + LZ(Math.floor(dd / 7) + 1) + " day " + (dd % 7 + 1) + ";";
+}
+
+function UKtaxMNstr(y, m, d) {
+    var yy = y, mm = m;
+    if (d &lt; 6) {
+        mm--;
+    }
+    if (mm &lt; 4) {
+        yy--;
+        mm += 12;
+    }
+    return " Year " + yy + " month " + LZ(mm - 3) + ".";
+}</textarea></p>
+<p align="center">
+<textarea readonly="readonly" wrap="virtual" style="border: thick double red;" cols="69" rows="8">function
+TaxTest() { var D = new Date(), dy = D.getDate(), mo = D.getMonth() +
+1, yr = D.getFullYear(); document.write("By TaxTest() : Today is ",
+D.YMDDstr(), " ; thus it is :\n", UKtaxWNstr(yr, mo, dy),
+UKtaxMNstr(yr, mo, dy), "\nOddWkNo3(D, 4, 6) : ", ywkdStr(D =
+OddWkNo3(new Date(yr, mo - 1, dy), 4, 6)), "; OffWkNo3 : ", OffWkNo3(D,
+4, 6).ISOlocaldateStr());
+}</textarea></p>
+<pre class="OUT">
+By TaxTest() : Today is 2006-04-13 Thu ; thus it is :
+UK Revenue &amp; Customs: Year 2006 week 02 day 1; Year 2006 month 01.
+OddWkNo3(D, 4, 6) : 2006wk02d1;  OffWkNo3 : 2006-04-13</pre>
+<noscript><p> * Javascript here * </p></noscript>
+
+<p>Those can easily be generalised for Month 1 and Week 1 starting on
+any date of the calendar year; in the code, 134 is just 4×32+6 for Month
+4 Day 6.</p>
+
+
+
+
+<h3><a name="T4">Type 4. Absolute Week Numbers</a></h3>
+
+<p>These start the week count on Monday, Julian BC 4713-01-01, 00:00:00
+GMT or local time (which corresponds with
+<a href="http://www.merlyn.demon.co.uk/miscdate.htm#CJD">CJD</a>).
+Modification for other starts is easy.</p>
+
+<script type="text/javascript">
+
+function AbsWkNo(D) { // D is Date Object or ms, not before JD -0.5
+  return ((2440588 + D/864e5)/7)|0 /* 719162 for AD1 */ }
+
+function LclWkNo(D) { // D is Date Object, not before CJD 0.
+  return AbsWkNo(D - D.getTimezoneOffset()*6e4) }
+
+function AWNstart(N) { return new Date((N*7 - 2440588)*864e5) }
+
+function LWNstart(N) { return new Date(-4713, 10, 24+7*N) }
+
+function TryAbsLclWN(F) {
+  var D = new Date(F.MyDT.value), S = 'Abs Wk No ', T
+  F.MyRslt.value =
+    'GMT ' + S + (T=AbsWkNo(D)) + '\tfrom : ' + AWNstart(T) +
+    '\nLcl ' + S + (T=LclWkNo(D)) + '\tfrom : ' + LWNstart(T) }
+
+ShoFFF(AbsWkNo, LclWkNo, AWNstart, LWNstart, 0, TryAbsLclWN)
+
+</script><p align="center">
+<textarea readonly="readonly" wrap="virtual" style="border: thick double lightgreen;" cols="69" rows="16">function
+AbsWkNo(D) { return ((2440588 + D / 86400000) / 7) | 0;
+}
+function LclWkNo(D) { return AbsWkNo(D - D.getTimezoneOffset() *
+60000);
+}
+function AWNstart(N) { return new Date((N * 7 - 2440588) * 86400000);
+}
+function LWNstart(N) { return new Date(-4713, 10, 24 + 7 * N);
+}
+function TryAbsLclWN(F) { var D = new Date(F.MyDT.value), S = "Abs Wk
+No ", T; F.MyRslt.value = "GMT " + S + (T = AbsWkNo(D)) + " from : " +
+AWNstart(T) + "\nLcl " + S + (T = LclWkNo(D)) + " from : " +
+LWNstart(T);
+}</textarea></p>
+<noscript><p> * Javascript here * </p></noscript>
+
+<form action="#">
+<div class="TRY">
+<input value=" Now " onclick="MyDT.value=new Date()" type="button">
+ &nbsp; Enter a date/time :<br>
+<input name="MyDT" size="40" value="2005/03/08" type="text"> &nbsp;
+<input value=" Try " onclick="TryAbsLclWN(this.form)" type="button">
+&nbsp; <input value="MoreTest?" onclick="alert('Not yet.')" type="button"><br>
+<textarea name="MyRslt" rows="2" cols="64" readonly="readonly">???</textarea>
+</div>
+</form>
+
+<p>See in <a href="http://www.merlyn.demon.co.uk/weekinfo.htm#AWN">Calendar Weeks</a>.</p>
+
+
+
+
+<h2><a name="WUC">Week Numbers in UNIX &amp; C Utilities</a></h2>
+
+<p>Check the definitions carefully, and test the implementation well
+too. Consider the <a href="http://www.merlyn.demon.co.uk/misctime.htm#TZ">TZ</a> environment
+variable, and determine whether it is
+<a href="http://www.merlyn.demon.co.uk/batfiles.htm#GAWK">fully used</a>, including the transition
+dates. Check what day and what number begin each week, and what happens
+around the change in year number.</p>
+
+
+<h3>Function strftime()</h3>
+
+<p>A 1999 man page in
+<a href="http://unixhelp.ed.ac.uk/CGI/man-cgi?strftime+3">unixhelp</a>
+(<a href="file:///c:/imports/gawk/strftime.htm">*</a>) includes ISO
+formats<tt> %G %g </tt>for the year of<tt> %V </tt>the week number,<tt>
+%u </tt>for Mon=1..Sun=7. Also, it has other versions of week data.</p>
+
+
+<h3><a name="GWN">GAWK</a></h3>
+
+<h5>2002-03-30 <i>ff.</i></h5>
+
+<p>An older GAWK man page (FSF, 1994-11-24) implied that the
+corresponding GAWK<tt> strftime() </tt>followed the ANSI C standard; and
+tests on a particular older GAWK show that it includes non-ISO week
+numbering. Beware.</p>
+
+
+<h5>2002-07-12 <i>ff.</i></h5>
+
+<p>But Markus Kuhn has written <!-- E-mail --> :-
+<br><i> - ANSI C is obsolete. The current C standard is ISO C (1999),
+which has<tt> %V </tt>in<tt> strftime() </tt>for
+ISO 8601 week numbers.</i></p>
+
+<p>Tests show that my old copy of GAWK (<tt>Gnu Awk (gawk) 2.15,
+patchlevel 6</tt>) does have<tt> %V </tt>but that it is implemented
+incorrectly for many year rollovers; and does not know<tt> %G </tt>which
+should give the proper year. I have <a href="#GWF">code</a> to
+fix this.</p>
+
+
+<div class="TOE">
+See also
+<a href="http://www.merlyn.demon.co.uk/weekinfo.htm">Calendar Weeks</a>;<br>
+<a href="http://www.merlyn.demon.co.uk/miscdate.htm">Date Miscellany I</a> &amp;
+<a href="http://www.merlyn.demon.co.uk/moredate.htm">Date Miscellany II</a>;<br>
+<a href="http://www.merlyn.demon.co.uk/zeller-c.htm">Zeller</a>;
+and <a href="http://www.merlyn.demon.co.uk/misctime.htm">Time Miscellany</a>.
+</div>
+
+
+<!-- =STD= -->
+
+<div class="TOE">
+
+<div class="L25"><a href="http://www.merlyn.demon.co.uk/index.htm">Home Page</a></div>
+
+<div class="R25"><a href="http://www.merlyn.demon.co.uk/index.htm#Mail">Mail: no HTML</a></div>
+
+© <b>Dr J R Stockton</b>, Surrey, UK.
+<br>All Rights Reserved.
+
+<div class="SML">These pages are tested mainly with MS IE 4
+ and W3's <a href="http://www.merlyn.demon.co.uk/www-use2.htm#Test">Tidy</a>.
+<br>This site, <em>http://www.merlyn.demon.co.uk/</em>,
+ is maintained by <a href="http://www.merlyn.demon.co.uk/index.htm#Mail">me</a>.</div>
+
+<a href="#Head">Head</a><a name="Tail">.</a>
+
+</div>
+
+</body></html>
